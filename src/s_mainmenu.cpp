@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
-#include "mainmenu_scene.h"
+#include "s_mainmenu.h"
+#include "s_test1.h"
 
 namespace MainMenu {
 
@@ -25,7 +26,7 @@ namespace MainMenu {
 		L.EndLine();
 
 		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("play")).SetLabelBorder().onClicked = [this] {
-			gg.MakeScene<Scene>()->Init();	// todo
+			gg.MakeScene<Test1::Scene>()->Init();
 		};
 
 		L.InitEnd();
