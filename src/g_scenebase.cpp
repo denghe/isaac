@@ -3,18 +3,14 @@
 
 namespace Global {
 
-	void SceneBase::Init() {
-		cam.Init(gg.scale, 1.f, gg.designSize / 2);
-		sortContainer.Resize<true>((int32_t)gg.designSize.y);
-		cursor.Emplace()->Init();
-		MakeUI();
+	void SceneBase_::Init() {
 	}
 
-	void SceneBase::MakeUI() {
+	void SceneBase_::MakeUI() {
 		ui.Emplace()->InitRoot(gg.scale);
 	}
 
-	void SceneBase::Update() {
+	void SceneBase_::Update() {
 		//// handle inputs
 		//if (gg.keyboard[GLFW_KEY_ESCAPE](0.2f)) {
 		//	gg.MakeScene<MainMenu::Scene>()->Init();
@@ -31,24 +27,24 @@ namespace Global {
 		}
 	}
 
-	void SceneBase::FixedUpdate() {
+	void SceneBase_::FixedUpdate() {
 	}
 
-	void SceneBase::Draw() {
+	void SceneBase_::Draw() {
 		// draw ui
 		gg.DrawNode(ui);
 	}
 
-	void SceneBase::DrawCursor() {
+	void SceneBase_::DrawCursor() {
 		cursor->Draw();
 	}
 
-	void SceneBase::OnResize(bool modeChanged_) {
+	void SceneBase_::OnResize(bool modeChanged_) {
 		ui->Resize(gg.scale);
 		cam.SetBaseScale(gg.scale);
 	}
 
-	void SceneBase::OnFocus(bool focused_) {
+	void SceneBase_::OnFocus(bool focused_) {
 		if (focused_) {
 			gg.sound.SetGlobalVolume(1);
 		}
@@ -57,21 +53,6 @@ namespace Global {
 		}
 	}
 
-
-	void SceneBase::SortContainerAdd(SceneItem* o_) {
-		auto& slot = sortContainer[(int32_t)o_->y];
-		o_->next = slot;
-		slot = o_;
+	SceneBase_::~SceneBase_() {
 	}
-
-	void SceneBase::SortContainerDraw() {
-		for (auto o : sortContainer) {
-			while (o) {
-				o->Draw();
-				o = o->next;
-			}
-		}
-		memset(sortContainer.buf, 0, sortContainer.len * sizeof(void*));
-	}
-
 }

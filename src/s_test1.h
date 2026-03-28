@@ -5,6 +5,8 @@
 
 // simulate isaac game scene
 
+// todo: big map camera logic
+
 namespace Test1 {
 	static constexpr float cUIScale{ 0.5f };
 
@@ -25,24 +27,49 @@ namespace Test1 {
 
 	// ...
 
-	struct Scene;
+	struct PhysSystem;
+	struct Wall;
+	struct Door;
+	struct Bucket;
+	struct Player;
 
-	struct SceneItem {
-		static constexpr int32_t cTypeId{};
-		Scene* scene{};
-		SceneItem* next{};
-		int32_t typeId{};	// fill by Init: typeId = cTypeId
+	template<typename SI>
+	struct GridCache {
 		XY pos{};
-		float y{};
-		float scale{}, radians{}, radius{};
-		bool flipX{}, isCenter{};
-		int32_t indexAtContainer{ -1 };
-		int32_t indexAtGrid{ -1 };
-		virtual bool Update() { return false; }
-		virtual void Draw() {};
-		virtual void Dispose() {};	// unsafe: container.swapRemove( this )
-		virtual ~SceneItem() {};
+		float radius{};
+		void operator=(SI* p) {
+			pos = p->pos;
+			radius = p->radius;
+		}
 	};
+
+	struct Scene : Global::SceneBase<Scene> {
+		using SceneItem = Global::SceneItem<Scene>;
+
+		XY mapSize{};
+		xx::Grid2dCircle<SceneItem*, GridCache<SceneItem>> gridBuildings;	// for walls, doors
+		//xx::Grid2dCircle<SceneItem*, GridCache> gridItems;	// for buckets, players, ...
+		xx::Shared<PhysSystem> phys;
+		xx::List<xx::Shared<Wall>> walls;
+		xx::List<xx::Shared<Door>> doors;
+		xx::List<xx::Shared<Bucket>> buckets;
+		xx::List<xx::Shared<Player>> players;
+
+		void GenWallHorizontal(int32_t xFrom_, int32_t xTo_, int32_t y_, bool leftOverflow_ = false, bool rightOverflow_ = false);
+		void GenWallVertical(int32_t x_, int32_t yFrom_, int32_t yTo_, bool topOverflow_ = false, bool bottomOverflow_ = false);
+		void GenDoorHorizontal(int32_t x_, int32_t y_);
+		void GenDoorVertical(int32_t x_, int32_t y_);
+		void GenPlayer(int32_t x_, int32_t y_);
+		void GenBucket(int32_t x_, int32_t y_);
+
+		void Init();
+		void Update() override;
+		void FixedUpdate() override;
+		void Draw() override;
+		void OnResize(bool modeChanged_) override;
+	};
+
+	using SceneItem = Scene::SceneItem;
 
 	// todo: Bomb....
 
@@ -81,46 +108,6 @@ namespace Test1 {
 		void Draw() override;
 		void Dispose() override;	// unsafe
 		~Bucket() override;
-	};
-
-
-	struct GridCache {
-		XY pos{};
-		float radius{};
-		void operator=(SceneItem* p);
-	};
-	struct PhysSystem;
-
-	struct Scene : Global::SceneBase {
-		xx::Shared<xx::Node> ui;
-		xx::Camera cam;
-		float time{}, timePool{}, timeScale{ 1 };
-
-		XY mapSize{};
-		xx::Grid2dCircle<SceneItem*, GridCache> gridBuildings;	// for walls, doors
-		//xx::Grid2dCircle<SceneItem*, GridCache> gridItems;	// for buckets, players, ...
-		xx::Shared<PhysSystem> phys;
-		xx::List<xx::Shared<Wall>> walls;
-		xx::List<xx::Shared<Door>> doors;
-		xx::List<xx::Shared<Bucket>> buckets;
-		xx::List<xx::Shared<Player>> players;
-
-		void GenWallHorizontal(int32_t xFrom_, int32_t xTo_, int32_t y_, bool leftOverflow_ = false, bool rightOverflow_ = false);
-		void GenWallVertical(int32_t x_, int32_t yFrom_, int32_t yTo_, bool topOverflow_ = false, bool bottomOverflow_ = false);
-		void GenDoorHorizontal(int32_t x_, int32_t y_);
-		void GenDoorVertical(int32_t x_, int32_t y_);
-		void GenPlayer(int32_t x_, int32_t y_);
-		void GenBucket(int32_t x_, int32_t y_);
-
-		xx::List<SceneItem*> sortContainer;			// for draw order by Y
-		void SortContainerAdd(SceneItem* o_);
-		void SortContainerDraw();
-
-		void Init();
-		void Update() override;
-		void FixedUpdate() override;
-		void Draw() override;
-		void OnResize(bool modeChanged_) override;
 	};
 
 	/***************************************************************************************************/

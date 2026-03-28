@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "s_mainmenu.h"
 #include "s_test1.h"
+#include "s_test2.h"
+#include "s_test3.h"
 
 namespace MainMenu {
 
@@ -10,8 +12,6 @@ namespace MainMenu {
 		static constexpr float cItemHeight{ 80 };
 		static constexpr float cMargin{ 20 };
 		auto fontSize = cItemHeight - gg.embed.cfg_s9bN->paddings.TopBottom();
-
-		// todo: resize bug fix
 
 		auto C = ui->Make<xx::Node>();
 		xx::Layouter L;
@@ -25,8 +25,16 @@ namespace MainMenu {
 		L.Append(C->Make<xx::Label>()->Init(2, 0, 0, fontSize * 10)("isaac")).SetBorder();
 		L.EndLine();
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("play")).SetLabelBorder().onClicked = [this] {
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("test1")).SetLabelBorder().onClicked = [this] {
 			gg.MakeScene<Test1::Scene>()->Init();
+		};
+
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("test2")).SetLabelBorder().onClicked = [this] {
+			gg.MakeScene<Test2::Scene>()->Init();
+		};
+
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("test3")).SetLabelBorder().onClicked = [this] {
+			gg.MakeScene<Test3::Scene>()->Init();
 		};
 
 		L.InitEnd();

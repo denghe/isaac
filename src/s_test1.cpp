@@ -12,9 +12,9 @@ namespace Test1 {
 		radius = cWallRadius;
 		scale = radius * 2.f / gg.pics.cell_wall.uvRect.w;
 		radians = {};
-		indexAtContainer = scene->walls.len - 1;
-		assert(scene->walls[indexAtContainer].pointer == this);
-		scene->gridBuildings.Add(indexAtGrid, this);
+		indexAtContainer = scene_->walls.len - 1;
+		assert(scene_->walls[indexAtContainer].pointer == this);
+		scene_->gridBuildings.Add(indexAtGrid, this);
 	}
 
 	void Wall::Draw() {
@@ -23,6 +23,7 @@ namespace Test1 {
 	}
 
 	void Wall::Dispose() {
+		auto scene = (Scene*)this->scene;
 		auto i = indexAtContainer;
 		assert(scene->walls[i].pointer == this);
 		scene->walls.Back()->indexAtContainer = i;
@@ -31,6 +32,7 @@ namespace Test1 {
 	}
 
 	Wall::~Wall() {
+		auto scene = (Scene*)this->scene;
 		if (indexAtGrid > -1) {
 			scene->gridBuildings.Remove(indexAtGrid, this);
 			indexAtGrid = -1;
@@ -277,11 +279,6 @@ namespace Test1 {
 	/***************************************************************************************************/
 	/***************************************************************************************************/
 
-	void GridCache::operator=(SceneItem* p) {
-		pos = p->pos;
-		radius = p->radius;
-	}
-
 	void Scene::GenWallHorizontal(int32_t xFrom_, int32_t xTo_, int32_t y_, bool leftOverflow_, bool rightOverflow_) {
 		for (int32_t x = xFrom_; x <= xTo_; ++x) {
 			walls.Emplace().Emplace()->Init(this, XY{ x, y_ } * cCellPixelSize + cCellPixelHalfSize);
@@ -467,21 +464,4 @@ namespace Test1 {
 		cam.SetBaseScale(gg.scale);
 	}
 
-
-
-	XX_INLINE void Scene::SortContainerAdd(SceneItem* o_) {
-		auto& slot = sortContainer[(int32_t)o_->y];
-		o_->next = slot;
-		slot = o_;
-	}
-
-	XX_INLINE void Scene::SortContainerDraw() {
-		for (auto o : sortContainer) {
-			while (o) {
-				o->Draw();
-				o = o->next;
-			}
-		}
-		memset(sortContainer.buf, 0, sortContainer.len * sizeof(void*));
-	}
 }
