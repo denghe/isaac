@@ -3,6 +3,12 @@
 #include <xx_frame.h>
 
 struct _pics {
+	xx::Frame c32;
+	xx::Frame c32_bullet;
+	xx::Frame c64;
+	xx::Frame c64_bullet;
+	xx::Frame c128;
+	xx::Frame c128_monster;
 	xx::Frame cell_bucket;
 	xx::Frame cell_door;
 	xx::Frame cell_floor;

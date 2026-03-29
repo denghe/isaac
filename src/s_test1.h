@@ -44,7 +44,7 @@ namespace Test1 {
 	};
 
 	struct Scene : Global::SceneBase<Scene> {
-		using SceneItem = Global::SceneItem<Scene>;
+		using SceneItem = Global::SceneItemBase<Scene>;
 
 		XY mapSize{};
 		xx::Grid2dCircle<SceneItem*, GridCache<SceneItem>> gridBuildings;	// for walls, doors
@@ -95,7 +95,7 @@ namespace Test1 {
 		static constexpr XY cAccel{ cSpeedMax * 0.1f };
 		XY lastMoveDir{}, speed{};
 		void Init(Scene* scene_, XY pos_);
-		bool Update() override;
+		void Update() override;
 		void Draw() override;
 		void Dispose() override;	// unsafe
 		~Player() override;
@@ -104,7 +104,7 @@ namespace Test1 {
 	struct Bucket : SceneItem {
 		static constexpr int32_t cTypeId{ __LINE__ };
 		void Init(Scene* scene_, XY pos_);
-		bool Update() override;
+		void Update() override;
 		void Draw() override;
 		void Dispose() override;	// unsafe
 		~Bucket() override;

@@ -3,6 +3,7 @@
 #include "s_test1.h"
 #include "s_test2.h"
 #include "s_test3.h"
+#include "s_test4.h"
 
 namespace MainMenu {
 
@@ -35,6 +36,10 @@ namespace MainMenu {
 
 		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("test3")).SetLabelBorder().onClicked = [this] {
 			gg.MakeScene<Test3::Scene>()->Init();
+		};
+
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("test4")).SetLabelBorder().onClicked = [this] {
+			gg.MakeScene<Test4::Scene>()->Init();
 		};
 
 		L.InitEnd();

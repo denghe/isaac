@@ -72,7 +72,6 @@ namespace Test1 {
 	Door::~Door() {
 		if (indexAtGrid > -1) {
 			scene->gridBuildings.Remove(indexAtGrid, this);
-			indexAtGrid = -1;
 		}
 	}
 
@@ -93,7 +92,7 @@ namespace Test1 {
 		indexAtGrid = scene->phys->Add(this);
 	}
 
-	bool Player::Update() {
+	void Player::Update() {
 
 		// input check
 		XY moveDir{};
@@ -208,8 +207,6 @@ namespace Test1 {
 
 
 		scene->phys->At(indexAtGrid).acc += acc;
-
-		return false;
 	}
 
 	void Player::Draw() {
@@ -250,9 +247,8 @@ namespace Test1 {
 		indexAtGrid = scene->phys->Add(this);
 	}
 
-	bool Bucket::Update() {
+	void Bucket::Update() {
 		// todo: logic
-		return false;
 	}
 
 	void Bucket::Draw() {
@@ -402,15 +398,12 @@ namespace Test1 {
 	}
 
 	void Scene::FixedUpdate() {
+		// todo: rewrite
 		for (auto i = players.len - 1; i >= 0; --i) {
-			if (players[i]->Update()) {
-				players[i]->Dispose();
-			}
+			players[i]->Update();
 		}
 		for (auto i = buckets.len - 1; i >= 0; --i) {
-			if (buckets[i]->Update()) {
-				buckets[i]->Dispose();
-			}
+			buckets[i]->Update();
 		}
 
 		phys->Update();
