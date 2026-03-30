@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "s_test1.h"
-#include "s_mainmenu.h"
+#include "mm_scene.h"
 
 namespace Test1 {
 

@@ -1,9 +1,9 @@
 ﻿#include "pch.h"
-#include "s_mainmenu.h"
+#include "mm_scene.h"
 #include "s_test1.h"
 #include "s_test2.h"
 #include "s_test3.h"
-#include "s_test4.h"
+#include "t4_scene.h"
 
 namespace MainMenu {
 

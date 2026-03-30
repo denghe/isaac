@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "game.h"
+#include "mm_scene.h"
 #include "g_scenebase.h"
-#include "s_mainmenu.h"
 
 // global game instance
 Global::Game gg;

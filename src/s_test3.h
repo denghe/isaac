@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "game.h"
-#include "s_mainmenu.h"
+#include "mm_scene.h"
 #include "g_scenebase.h"
 
 // 实现一套高效的 ABC 随便乱删的数组遍历逻辑（ 最后再删版 ）

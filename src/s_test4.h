@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "game.h"
-#include "s_mainmenu.h"
+#include "mm_scene.h"
 #include "g_scenebase.h"
 #include <xx_grid2d_circle.h>
 
@@ -14,10 +14,10 @@
 
 namespace Test4 {
 
-	struct Scene : Global::SceneBase {
-		using Base = Global::SceneBase;
-		using Base::Base;
-		using SceneItemBase = Global::SceneItemBase;
+	using SceneBase = Global::SceneBase;
+	using SceneItemBase = Global::SceneItemBase;
+	struct Scene : SceneBase {
+		using SceneBase::SceneBase;
 
 		void Init() override;
 		void Update() override;
@@ -38,10 +38,9 @@ namespace Test4 {
 	struct SceneItem : Global::SceneItemBase {
 		Scene* scene{};
 
-		template<typename Derived>
-		void SceneItemInit(Scene* scene_, XY pos_, float radius_) {
+		void SceneItemInit(int32_t typeId_, Scene* scene_, XY pos_, float radius_) {
 			scene = scene_;
-			typeId = Derived::cTypeId;
+			typeId = typeId_;
 			indexAtContainer = scene->items.len - 1;
 			assert(scene_->items[indexAtContainer].pointer == this);
 			pos = pos_;
@@ -124,7 +123,7 @@ namespace Test4 {
 	/**********************************************************************************************************/
 
 	inline void Monster::Init(Scene* scene_, XY pos_, float radius_) {
-		SceneItemInit<std::remove_pointer_t<decltype(this)>>(scene_, pos_, radius_);
+		SceneItemInit(cTypeId, scene_, pos_, radius_);
 		deathTime = scene->time + cLifespan;
 		nextShootTime = scene->time + cShootInterval;
 	}
@@ -152,7 +151,7 @@ namespace Test4 {
 	/**********************************************************************************************************/
 
 	inline void Bullet1::Init(Scene* scene_, XY pos_, float radius_, xx::Weak<Monster> owner_) {
-		SceneItemInit<std::remove_pointer_t<decltype(this)>>(scene_, pos_, radius_);
+		SceneItemInit(cTypeId, scene_, pos_, radius_);
 		owner = std::move(owner_);
 		deathTime = scene->time + cLifespan;
 		nextShootTime = scene->time + cShootInterval;
@@ -204,7 +203,7 @@ namespace Test4 {
 	/**********************************************************************************************************/
 
 	inline void Bullet2::Init(Scene* scene_, XY pos_, float radius_, xx::Weak<Bullet1> mother_) {
-		SceneItemInit<std::remove_pointer_t<decltype(this)>>(scene_, pos_, radius_);
+		SceneItemInit(cTypeId, scene_, pos_, radius_);
 		owner = mother_->owner;
 	}
 
@@ -220,7 +219,7 @@ namespace Test4 {
 	/**********************************************************************************************************/
 
 	inline void Scene::Init() {
-		Base::Init();
+		SceneBase::Init();
 
 		mapSize = { 1920 * 5, 1080 * 5 };
 		mapCenterPos = mapSize / 2;
@@ -241,7 +240,8 @@ namespace Test4 {
 			gg.MakeScene<MainMenu::Scene>()->Init();
 			return;
 		}
-		Base::Update();
+
+		SceneBase::Update();
 	}
 
 	inline void Scene::FixedUpdate() {
@@ -261,7 +261,7 @@ namespace Test4 {
 			o->Draw();
 		}
 
-		Base::Draw();
+		SceneBase::Draw();
 	}
 
 	XX_INLINE void Scene::DrawItem(xx::Frame& f_, XY pos_, float scale_) {

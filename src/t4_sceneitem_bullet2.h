@@ -1,0 +1,20 @@
+﻿#pragma once
+#include "t4_sceneitem_bullet1.h"
+
+namespace Test4 {
+
+	struct Bullet2 : SceneItem {
+		static constexpr int32_t cTypeId{ __LINE__ };
+		static constexpr float cLifespan{ 10.f };
+		static constexpr float cShootInterval{ 0.5f };
+		xx::Weak<Monster> owner;
+		int32_t _1{};
+		float deathTime{}, nextShootTime{};
+		int32_t moveLeftStep{};
+		XY moveInc{};
+		void Init(Scene* scene_, XY pos_, float radius_, xx::Weak<Bullet1> mother_);
+		void Update() override;
+		void Draw() override;
+	};
+
+}

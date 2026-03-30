@@ -42,11 +42,8 @@ namespace Global {
 		// 删除对象
 		virtual void Dispose() {};
 
-		// 删除对象( 首先会检查标记，避免重复删除 )
-		void TryDispose() {
-			if (disposing) return;
-			Dispose();
-		}
+		// 试着删除对象
+		void TryDispose();
 
 		// Dispose 的中间步骤，清理资源，事件逻辑
 		virtual void OnDispose() {};
@@ -69,90 +66,101 @@ namespace Global {
 		float time{}, timePool{}, timeScale{ 1 }, timer{};
 
 		// 默认初始化
-		virtual void Init() {
-			cam.Init(gg.scale, 1.f, gg.designSize / 2);
-			sortContainer.Resize<true>((int32_t)gg.designSize.y);
-			cursor.Emplace()->Init();
-			MakeUI();
-		}
+		virtual void Init();
 
 		// UI 初始化，默认创建一个根节点
-		virtual void MakeUI() {
-			ui.Emplace()->InitRoot(gg.scale);
-		}
+		virtual void MakeUI();
 
 		// 帧逻辑
-		void Update() override {
-			/* for copy code
-			// handle inputs
-			if (gg.keyboard[GLFW_KEY_ESCAPE](0.2f)) {
-				gg.MakeScene<MainMenu::Scene>()->Init();
-				return;
-			}
-			*/
-
-			// fixed update
-			auto d = float(std::min((float)gg.delta, gg.cMaxDelta) * timeScale);
-			timePool += d;
-			while (timePool >= gg.cDelta) {
-				time += gg.cDelta;
-				timePool -= gg.cDelta;
-				FixedUpdate();
-			}
-		}
+		void Update() override;
 
 		// 固定时间帧逻辑( 每秒调用 gg.cFps 次 )
 		virtual void FixedUpdate() {}
 
 		// 绘制
-		void Draw() override {
-			// draw ui
-			gg.DrawNode(ui);
-		}
+		void Draw() override;
 
 		// 绘制鼠标指针
-		virtual void DrawCursor() {
-			cursor->Draw();
-		}
+		virtual void DrawCursor();
 
 		// 处理窗口大小变化，默认调整 UI 和摄像机
-		void OnResize(bool modeChanged_) override {
-			ui->Resize(gg.scale);
-			cam.SetBaseScale(gg.scale);
-		}
+		void OnResize(bool modeChanged_) override;
 
 		// 处理窗口焦点变化，默认调整全局音量
-		void OnFocus(bool focused_) override {
-			if (focused_) {
-				gg.sound.SetGlobalVolume(1);
-			}
-			else {
-				gg.sound.SetGlobalVolume(0);
-			}
-		}
+		void OnFocus(bool focused_) override;
 
 		virtual ~SceneBase() = default;
 
-
-		// 下面这些东西为 按 y 坐标排序服务
+		// y坐标排序容器
 		xx::List<SceneItemBase*> sortContainer;
 
-		void SortContainerAdd(SceneItemBase* o_) {
-			auto& slot = sortContainer[(int32_t)o_->y];
-			o_->next = slot;
-			slot = o_;
-		}
+		// 往 y排序容器 添加一个对象
+		void SortContainerAdd(SceneItemBase* o_);
 
-		void SortContainerDraw() {
-			for (auto o : sortContainer) {
-				while (o) {
-					o->Draw();
-					o = o->next;
-				}
-			}
-			memset(sortContainer.buf, 0, sortContainer.len * sizeof(void*));
-		}
+		// 绘制 y排序容器 中的对象，绘制完成后清空容器
+		void SortContainerDraw();
 
 	};
 
 }
+
+/* for copy code
+
+	struct Scene : Global::SceneBase {
+		using Base = Global::SceneBase;
+		using Base::Base;
+		using SceneItemBase = Global::SceneItemBase;
+
+		void Init() override;
+		void Update() override;
+		void FixedUpdate() override;
+		void Draw() override;
+		void DrawItem(xx::Frame& f_, XY pos_, float scale_);
+
+		XY mapSize{}, mapCenterPos{};
+		static constexpr float cCellPixelSize{ 64.f };
+		static constexpr int32_t cNumMaxItems{ 100000 };
+		xx::List<xx::Shared<SceneItemBase>> items;
+		xx::Grid2dCircle<SceneItemBase*> itemsGrid;	// todo: cache
+	};
+
+	struct SceneItem : Global::SceneItemBase {
+		Scene* scene{};
+
+		void SceneItemInit(int32_t typeId_, Scene* scene_, XY pos_, float radius_) {
+			scene = scene_;
+			typeId = typeId_;
+			indexAtContainer = scene->items.len - 1;
+			assert(scene_->items[indexAtContainer].pointer == this);
+			pos = pos_;
+			radius = radius_;
+			scene_->itemsGrid.Add(indexAtGrid, this);
+		}
+
+		void Dispose() override {
+			assert(scene);
+			assert(!disposing);
+			assert(indexAtContainer != -1);
+			assert(scene->items[indexAtContainer].pointer == this);
+			assert(scene->itemsGrid.ValueAt(indexAtGrid) == this);
+
+			// 设置标记
+			disposing = true;
+
+			// 从 grid 中移除对象，避免被查询到
+			if (indexAtGrid != -1) {
+				scene->itemsGrid.Remove(indexAtGrid, this);
+			}
+
+			// 进一步释放资源，事件逻辑
+			OnDispose();
+
+			// 从容器中移除对象( 释放内存 )
+			auto i = indexAtContainer;
+			scene->items.Back()->indexAtContainer = i;
+			indexAtContainer = -1;
+			scene->items.SwapRemoveAt(i);	// unsafe: release memory
+		}
+	};
+
+*/
