@@ -27,8 +27,8 @@ namespace Test3 {
 		virtual void Update() {};
 	};
 
-	struct Scene : Global::SceneBase<Scene> {
-		using Base = Global::SceneBase<Scene>;
+	struct Scene : Global::SceneBase {
+		using Base = Global::SceneBase;
 		void Init() override;
 		void Update() override {
 			if (gg.keyboard[GLFW_KEY_ESCAPE](0.2f)) {
@@ -119,7 +119,7 @@ namespace Test3 {
 
 		for (size_t j = 0; j < 10; j++) {
 
-			for (size_t k = 0; k < 10000; k++) {
+			for (size_t k = 0; k < 100; k++) {
 				items.Emplace().Emplace<A>()->Init(this);
 				items.Emplace().Emplace<B>()->Init(this);
 				items.Emplace().Emplace<C>()->Init(this);

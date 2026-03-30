@@ -3,7 +3,7 @@
 #include "_pics.h"
 
 namespace Global {
-	struct SceneBase_;
+	struct SceneBase;
 
 	struct Game : xx::GameBase {
 		static constexpr float cFps{ 120 };
@@ -19,7 +19,7 @@ namespace Global {
 		xx::Shared<xx::Node> ui;
 		xx::Weak<xx::Label> uiFPS, uiText, uiTips;
 
-		xx::Shared<SceneBase_> scene, oldScene;
+		xx::Shared<SceneBase> scene, oldScene;
 		template<typename T>
 		xx::Shared<T>& MakeScene() {
 			oldScene = std::move(scene);

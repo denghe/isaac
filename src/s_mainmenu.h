@@ -3,7 +3,7 @@
 
 namespace MainMenu {
 
-	struct Scene : Global::SceneBase<Scene> {
+	struct Scene : Global::SceneBase {
 		void MakeUI() override;
 		void Update() override;
 	};

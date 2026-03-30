@@ -14,58 +14,11 @@
 
 namespace Test4 {
 
-	struct Scene;
-	struct SceneItemBase {
-		// for copy code
-		// static constexpr int32_t cTypeId{ __LINE__ };
-		// void Init(Scene* scene_) { BaseInit<std::remove_pointer_t<decltype(this)>>(scene_); }
+	struct Scene : Global::SceneBase {
+		using Base = Global::SceneBase;
+		using Base::Base;
+		using SceneItemBase = Global::SceneItemBase;
 
-		// 用于 switch case 逻辑，避免 dynamic_cast 带来的性能问题
-		int32_t typeId{};
-
-		// 所有查询行为都要检测这个标记，正在删除的对象不参与任何行为，包括被删除对象自己
-		bool disposing{};
-
-		// more flag here
-
-		// 方便访问场景
-		Scene* scene{};
-
-		// 记录在容器中的位置, 方便高速随机删除
-		int32_t indexAtContainer{ -1 }, indexAtGrid{ -1 };
-
-		// 下面是是一些常用属性
-		XY pos{};
-		float radius{};
-		// ...
-
-		// 基础初始化，设置 typeId 和 scene，记录在容器中的位置，其他属性由子类自己设置
-		template<typename Derived>
-		void BaseInit(Scene* scene_, XY pos_, float radius_);
-
-		// 需要子类 override
-		virtual void Update() {};
-
-		// 需要子类 override
-		virtual void Draw() {};
-
-		virtual ~SceneItemBase() = default;
-
-		// 删除对象
-		void Dispose();
-
-		// 删除对象( 首先会检查标记，避免重复删除 )
-		void TryDispose();
-
-		// 需要子类 override， Dispose 的第2步，清理资源，事件逻辑
-		virtual void OnDispose() {};
-	};
-
-	/**********************************************************************************************************/
-	/**********************************************************************************************************/
-
-	struct Scene : Global::SceneBase<Scene> {
-		using Base = Global::SceneBase<Scene>;
 		void Init() override;
 		void Update() override;
 		void FixedUpdate() override;
@@ -82,51 +35,50 @@ namespace Test4 {
 	/**********************************************************************************************************/
 	/**********************************************************************************************************/
 
-	template<typename Derived>
-	void SceneItemBase::BaseInit(Scene* scene_, XY pos_, float radius_) {
-		scene = scene_;
-		typeId = Derived::cTypeId;
-		indexAtContainer = scene->items.len - 1;
-		assert(scene_->items[indexAtContainer].pointer == this);
-		pos = pos_;
-		radius = radius_;
-		scene_->itemsGrid.Add(indexAtGrid, this);
-	}
+	struct SceneItem : Global::SceneItemBase {
+		Scene* scene{};
 
-	inline void SceneItemBase::TryDispose() {
-		if (disposing) return;
-		Dispose();
-	}
-
-	inline void SceneItemBase::Dispose() {
-		assert(scene);
-		assert(!disposing);
-		assert(indexAtContainer != -1);
-		assert(scene->items[indexAtContainer].pointer == this);
-		assert(scene->itemsGrid.ValueAt(indexAtGrid) == this);
-
-		// 设置标记
-		disposing = true;
-
-		// 从 grid 中移除对象，避免被查询到
-		if (indexAtGrid != -1) {
-			scene->itemsGrid.Remove(indexAtGrid, this);
+		template<typename Derived>
+		void SceneItemInit(Scene* scene_, XY pos_, float radius_) {
+			scene = scene_;
+			typeId = Derived::cTypeId;
+			indexAtContainer = scene->items.len - 1;
+			assert(scene_->items[indexAtContainer].pointer == this);
+			pos = pos_;
+			radius = radius_;
+			scene_->itemsGrid.Add(indexAtGrid, this);
 		}
-		
-		// 进一步释放资源，事件逻辑
-		OnDispose();
 
-		// 从容器中移除对象( 释放内存 )
-		auto i = indexAtContainer;
-		scene->items.Back()->indexAtContainer = i;
-		indexAtContainer = -1;
-		scene->items.SwapRemoveAt(i);	// unsafe: release memory
-	}
+		void Dispose() override {
+			assert(scene);
+			assert(!disposing);
+			assert(indexAtContainer != -1);
+			assert(scene->items[indexAtContainer].pointer == this);
+			assert(scene->itemsGrid.ValueAt(indexAtGrid) == this);
+
+			// 设置标记
+			disposing = true;
+
+			// 从 grid 中移除对象，避免被查询到
+			if (indexAtGrid != -1) {
+				scene->itemsGrid.Remove(indexAtGrid, this);
+			}
+
+			// 进一步释放资源，事件逻辑
+			OnDispose();
+
+			// 从容器中移除对象( 释放内存 )
+			auto i = indexAtContainer;
+			scene->items.Back()->indexAtContainer = i;
+			indexAtContainer = -1;
+			scene->items.SwapRemoveAt(i);	// unsafe: release memory
+		}
+	};
 
 	/**********************************************************************************************************/
 	/**********************************************************************************************************/
 
-	struct Monster : SceneItemBase {
+	struct Monster : SceneItem {
 		static constexpr int32_t cTypeId{ __LINE__ };
 		static constexpr float cLifespan{ 100.f };
 		static constexpr float cShootInterval{ 1.f };
@@ -137,7 +89,7 @@ namespace Test4 {
 		void Draw() override;
 	};
 
-	struct Bullet1 : SceneItemBase {
+	struct Bullet1 : SceneItem {
 		static constexpr int32_t cTypeId{ __LINE__ };
 		static constexpr float cLifespan{ 10.f };
 		static constexpr float cShootInterval{ 0.5f };
@@ -154,7 +106,7 @@ namespace Test4 {
 		void Draw() override;
 	};
 
-	struct Bullet2 : SceneItemBase {
+	struct Bullet2 : SceneItem {
 		static constexpr int32_t cTypeId{ __LINE__ };
 		static constexpr float cLifespan{ 10.f };
 		static constexpr float cShootInterval{ 0.5f };
@@ -172,7 +124,7 @@ namespace Test4 {
 	/**********************************************************************************************************/
 
 	inline void Monster::Init(Scene* scene_, XY pos_, float radius_) {
-		BaseInit<std::remove_pointer_t<decltype(this)>>(scene_, pos_, radius_);
+		SceneItemInit<std::remove_pointer_t<decltype(this)>>(scene_, pos_, radius_);
 		deathTime = scene->time + cLifespan;
 		nextShootTime = scene->time + cShootInterval;
 	}
@@ -200,7 +152,7 @@ namespace Test4 {
 	/**********************************************************************************************************/
 
 	inline void Bullet1::Init(Scene* scene_, XY pos_, float radius_, xx::Weak<Monster> owner_) {
-		BaseInit<std::remove_pointer_t<decltype(this)>>(scene_, pos_, radius_);
+		SceneItemInit<std::remove_pointer_t<decltype(this)>>(scene_, pos_, radius_);
 		owner = std::move(owner_);
 		deathTime = scene->time + cLifespan;
 		nextShootTime = scene->time + cShootInterval;
@@ -252,7 +204,7 @@ namespace Test4 {
 	/**********************************************************************************************************/
 
 	inline void Bullet2::Init(Scene* scene_, XY pos_, float radius_, xx::Weak<Bullet1> mother_) {
-		BaseInit<std::remove_pointer_t<decltype(this)>>(scene_, pos_, radius_);
+		SceneItemInit<std::remove_pointer_t<decltype(this)>>(scene_, pos_, radius_);
 		owner = mother_->owner;
 	}
 

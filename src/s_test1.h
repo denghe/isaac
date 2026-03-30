@@ -43,9 +43,14 @@ namespace Test1 {
 		}
 	};
 
-	struct Scene : Global::SceneBase<Scene> {
-		using SceneItem = Global::SceneItemBase<Scene>;
 
+	struct Scene;
+	struct SceneItem : Global::SceneItemBase {
+		Scene* scene{};
+	};
+
+	using SceneBase = Global::SceneBase;
+	struct Scene : SceneBase {
 		XY mapSize{};
 		xx::Grid2dCircle<SceneItem*, GridCache<SceneItem>> gridBuildings;	// for walls, doors
 		//xx::Grid2dCircle<SceneItem*, GridCache> gridItems;	// for buckets, players, ...
@@ -68,8 +73,6 @@ namespace Test1 {
 		void Draw() override;
 		void OnResize(bool modeChanged_) override;
 	};
-
-	using SceneItem = Scene::SceneItem;
 
 	// todo: Bomb....
 

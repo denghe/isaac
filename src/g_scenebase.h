@@ -4,42 +4,84 @@
 
 namespace Global {
 
-	/*
-	* for copy code
-	
-	struct Scene : Global::SceneBase<Scene> {
-		using Base = Global::SceneBase<Scene>;
-		using Base::Base;
-		using SceneItem = Global::SceneItem<Scene>;
-		// todo: ui for show result
+	struct SceneItemBase {
+		/* for copy code
+		static constexpr int32_t cTypeId{ __LINE__ };
+		*/
 
-		xx::List<xx::Shared<SceneItem>> items;
+		// 用于 switch case 逻辑，避免 dynamic_cast 带来的性能问题
+		// 在 Init 系列函数中填充: typeId = cTypeId
+		int32_t typeId{};
 
-		void Init() override;
-		void MakeUI() override;
-		void Update() override;
-		void FixedUpdate() override;
-		void Draw() override;
-		void DrawCursor() override;
-		void OnResize(bool modeChanged_) override;
-		void OnFocus(bool focused_) override;
+		// 用于显示排序
+		float y{};
+		SceneItemBase* next{};
+
+		// 所有查询行为都要检测这个标记，正在删除的对象不参与任何行为，包括被删除对象自己
+		bool disposing{};
+
+		// 再放一些常用 bool 成员在此，充分利用内存对齐
+		bool flipX{}, isCenter{};
+		// ...
+
+		// 记录在容器中的位置, 方便高速随机删除
+		int32_t indexAtContainer{ -1 }, indexAtGrid{ -1 };
+
+		// 下面是是一些常用属性
+		XY pos{};
+		float scale{}, radians{}, radius{};
+		// ...
+
+
+		// 逻辑
+		virtual void Update() {}
+
+		// 绘制
+		virtual void Draw() {};
+
+		// 删除对象
+		virtual void Dispose() {};
+
+		// 删除对象( 首先会检查标记，避免重复删除 )
+		void TryDispose() {
+			if (disposing) return;
+			Dispose();
+		}
+
+		// Dispose 的中间步骤，清理资源，事件逻辑
+		virtual void OnDispose() {};
+
+		// 满足虚函数要求
+		virtual ~SceneItemBase() = default;
 	};
-	using SceneItem = Scene::SceneItem;
-	
-	*/
 
-	struct SceneBase_ : xx::SceneBase {
+	struct SceneBase : xx::SceneBase {
+		// 场景的根节点，所有 UI 都添加在这个节点下
 		xx::Shared<xx::Node> ui;
+
+		// 场景的摄像机
 		xx::Camera cam;
-		float time{}, timePool{}, timeScale{ 1 }, timer{};
+
+		// 鼠标指针
 		xx::Shared<CursorBase> cursor;
 
-		virtual void Init() {}
+		// fixed update 相关
+		float time{}, timePool{}, timeScale{ 1 }, timer{};
 
+		// 默认初始化
+		virtual void Init() {
+			cam.Init(gg.scale, 1.f, gg.designSize / 2);
+			sortContainer.Resize<true>((int32_t)gg.designSize.y);
+			cursor.Emplace()->Init();
+			MakeUI();
+		}
+
+		// UI 初始化，默认创建一个根节点
 		virtual void MakeUI() {
 			ui.Emplace()->InitRoot(gg.scale);
 		}
 
+		// 帧逻辑
 		void Update() override {
 			/* for copy code
 			// handle inputs
@@ -59,22 +101,27 @@ namespace Global {
 			}
 		}
 
+		// 固定时间帧逻辑( 每秒调用 gg.cFps 次 )
 		virtual void FixedUpdate() {}
 
+		// 绘制
 		void Draw() override {
 			// draw ui
 			gg.DrawNode(ui);
 		}
 
+		// 绘制鼠标指针
 		virtual void DrawCursor() {
 			cursor->Draw();
 		}
 
+		// 处理窗口大小变化，默认调整 UI 和摄像机
 		void OnResize(bool modeChanged_) override {
 			ui->Resize(gg.scale);
 			cam.SetBaseScale(gg.scale);
 		}
 
+		// 处理窗口焦点变化，默认调整全局音量
 		void OnFocus(bool focused_) override {
 			if (focused_) {
 				gg.sound.SetGlobalVolume(1);
@@ -84,100 +131,13 @@ namespace Global {
 			}
 		}
 
-		virtual ~SceneBase_() = default;
-	};
+		virtual ~SceneBase() = default;
 
-	template<typename DerivedSceneBaseEx>
-	struct SceneItemBase {
-		/* for copy code
-		static constexpr int32_t cTypeId{ __LINE__ };
-		void Init(Scene* scene_) { BaseInit<std::remove_pointer_t<decltype(this)>>(scene_); }
-		*/
-		static constexpr int32_t cTypeId{};
 
-		// 用于 switch case 逻辑，避免 dynamic_cast 带来的性能问题
-		// 在 Init 系列函数中填充: typeId = cTypeId
-		int32_t typeId{};
+		// 下面这些东西为 按 y 坐标排序服务
+		xx::List<SceneItemBase*> sortContainer;
 
-		// 用于显示排序
-		float y{};
-		SceneItemBase* next{};
-
-		// 方便访问场景
-		DerivedSceneBaseEx* scene{};
-
-		// 记录在容器中的位置, 方便高速随机删除
-		int32_t indexAtContainer{ -1 }, indexAtGrid{ -1 };
-
-		// 下面是是一些常用属性
-		XY pos{};
-		float scale{}, radians{}, radius{};
-		bool flipX{}, isCenter{};
-
-		// 所有查询行为都要检测这个标记，正在删除的对象不参与任何行为，包括被删除对象自己
-		bool disposing{};
-
-		// 逻辑
-		virtual void Update() {}
-
-		// 绘制
-		virtual void Draw() {};
-
-		// 删除对象
-		virtual void Dispose() {
-			/* for copy code
-			assert(scene);
-			assert(!disposing);
-			assert(indexAtContainer != -1);
-			assert(scene->items[indexAtContainer].pointer == this);
-			assert(scene->itemsGrid.ValueAt(indexAtGrid) == this);
-
-			// 设置标记
-			disposing = true;
-
-			// 从 grid 中移除对象，避免被查询到
-			if (indexAtGrid != -1) {
-				scene->itemsGrid.Remove(indexAtGrid, this);
-			}
-
-			// 进一步释放资源，事件逻辑
-			OnDispose();
-
-			// 从容器中移除对象( 释放内存 )
-			auto i = indexAtContainer;
-			scene->items.Back()->indexAtContainer = i;
-			indexAtContainer = -1;
-			scene->items.SwapRemoveAt(i);	// unsafe: release memory
-			*/
-		};
-
-		// 删除对象( 首先会检查标记，避免重复删除 )
-		void TryDispose() {
-			if (disposing) return;
-			Dispose();
-		}
-
-		// Dispose 的中间步骤，清理资源，事件逻辑
-		virtual void OnDispose() {};
-
-		virtual ~SceneItemBase() = default;
-	};
-
-	template<typename Derived>
-	struct SceneBase : SceneBase_ {
-		using SI = SceneItemBase<Derived>;
-
-		void Init() override {
-			cam.Init(gg.scale, 1.f, gg.designSize / 2);
-			sortContainer.Resize<true>((int32_t)gg.designSize.y);
-			cursor.Emplace()->Init();
-			MakeUI();
-		}
-
-		// for draw order by Y
-		xx::List<SI*> sortContainer;
-
-		void SortContainerAdd(SI* o_) {
+		void SortContainerAdd(SceneItemBase* o_) {
 			auto& slot = sortContainer[(int32_t)o_->y];
 			o_->next = slot;
 			slot = o_;
@@ -192,6 +152,7 @@ namespace Global {
 			}
 			memset(sortContainer.buf, 0, sortContainer.len * sizeof(void*));
 		}
+
 	};
 
 }
