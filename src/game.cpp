@@ -20,6 +20,9 @@ namespace Global {
 	}
 
 	void Game::GLInit() {
+		// init env
+		sgrdd.Init(64, 64);
+
 		// init global ui
 		ui.Emplace()->InitRoot(scale);
 		(uiFPS = ui->Make<xx::Label>())->Init(2, p7, a7, 32.f);

@@ -4,8 +4,9 @@
 
 namespace Test4 {
 
-	void Monster::Init(Scene* scene_, XY pos_, float radius_) {
+	void Monster::Init(Scene* scene_, XY pos_, float radius_, xx::RGBA8 color_) {
 		SceneItemInit(cTypeId, scene_, pos_, radius_);
+		color = color_;
 		deathTime = scene->time + cLifespan;
 		nextShootTime = scene->time + cShootInterval;
 	}
@@ -25,12 +26,13 @@ namespace Test4 {
 			// 计算子弹的初始位置和属性
 			auto radians = gg.rnd.Next<float>(-M_PI, M_PI);
 			auto bulletPos = pos + XY{ cosf(radians), sinf(radians) } * radius;
+			bulletPos = FixPosition(bulletPos);
 			scene->items.Emplace().Emplace<Bullet1>()->Init(scene, bulletPos, 64.f, xx::WeakFromThis(this));
 		}
 	}
 
 	void Monster::Draw() {
-		scene->DrawItem(gg.pics.c128_monster, pos, radius * (1.f / 64.f));
+		scene->DrawItem(gg.pics.c128_monster, pos, radius * (1.f / 64.f), color);
 	}
 
 }

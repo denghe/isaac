@@ -28,6 +28,7 @@ namespace Global {
 		}
 
 		xx::Rnd rnd;
+		xx::SpaceGridRingDiffuseData sgrdd;
 		_pics pics;
 		// ...
 

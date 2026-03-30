@@ -15,7 +15,7 @@ namespace Test4 {
 	void Scene::Init() {
 		SceneBase::Init();
 
-		mapSize = { 1920 * 5, 1080 * 5 };
+		mapSize = { 1920 * 2, 1080 * 2 };
 		mapCenterPos = mapSize / 2;
 		cam.Init(gg.scale, gg.designSize.y / mapSize.y, mapCenterPos);
 
@@ -25,8 +25,8 @@ namespace Test4 {
 
 
 		// 创建两只怪, 直接指定坐标
-		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ -1000, 0 }, 128.f);
-		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ 1000, 0 }, 128.f);
+		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ -1000, 0 }, 128.f, xx::RGBA8_Green);
+		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ 1000, 0 }, 128.f, xx::RGBA8_Blue);
 	}
 
 	void Scene::MakeUI() {
@@ -71,7 +71,10 @@ namespace Test4 {
 
 	void Scene::FixedUpdate() {
 		for (int i = items.len - 1; i >= 0;) {
-			items[i]->Update();	// 可能会删除当前对象，也可能会删除其他对象
+
+			// 帧逻辑. 可能会自杀，可能会删除其他对象
+			items[i]->Update();
+
 			if (i >= items.len) {
 				i = items.len - 1;
 			}
@@ -89,10 +92,10 @@ namespace Test4 {
 		SceneBase::Draw();
 	}
 
-	void Scene::DrawItem(xx::Frame& f_, XY pos_, float scale_) {
+	void Scene::DrawItem(xx::Frame& f_, XY pos_, float scale_, xx::RGBA8 color_) {
 		auto s = scale_ * cam.scale;
 		auto p = cam.ToGLPos(pos_);
-		gg.Quad().DrawFrame(f_, p, s);
+		gg.Quad().DrawFrame(f_, p, s, 0, 1, color_);
 	}
 
 }

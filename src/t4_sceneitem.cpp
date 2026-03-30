@@ -38,4 +38,37 @@ namespace Test4 {
 		scene->items.SwapRemoveAt(i);	// unsafe: release memory
 	}
 
+	XY SceneItem::FixPosition(XY pos_) {
+		// 地图边缘检测 回卷
+		auto ms = scene->mapSize;
+		assert(pos_.x > -ms.x && pos_.x < ms.x * 2);
+		if (pos_.x < 0) pos_.x += ms.x;
+		else if (pos_.x >= ms.x) pos_.x -= ms.x;
+		assert(pos_.y > -ms.y && pos_.y < ms.y * 2);
+		if (pos_.y < 0) pos_.y += ms.y;
+		else if (pos_.y >= ms.y) pos_.y -= ms.y;
+		return pos_;
+	}
+
+	void SceneItem::SetPosition(XY pos_) {
+		if (pos_ == pos) return;
+		pos = FixPosition(pos_);
+		// 新的 pos 值同步到空间索引 grid
+		scene->itemsGrid.Update(indexAtGrid, this);
+	}
+
+	//// 碰撞检测示例
+	//void SceneItem::RangeSearch() {
+	//	auto cri = scene->itemsGrid.PosToCRIndex(pos);
+	//	static constexpr float cCollectRange{ cFactoryRadius * 2 };
+	//	scene->itemsGrid.ForeachByRange(cri.y, cri.x, cCollectRange + 64, gg.sgrdd, [&](decltype(scene->gridMaterials)::Node& node, float range)
+	//		->void {
+	//			auto d = pos - node.cache.pos;
+	//			auto mag2 = d.x * d.x + d.y * d.y;
+	//			static constexpr float rr = cCollectRange * cCollectRange;
+	//			if (mag2 >= rr || mag2 <= 0.0001f) return;	// not cross?
+	//			flyingWoods.Emplace().Emplace()->Init(this, node.value);
+	//			node.value->Dispose();
+	//		});
+	//}
 }

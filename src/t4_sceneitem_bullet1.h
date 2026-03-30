@@ -4,7 +4,7 @@
 namespace Test4 {
 
 	struct Bullet1 : SceneItem {
-		static constexpr int32_t cTypeId{ __LINE__ };
+		static constexpr int32_t cTypeId{ 3 };
 		static constexpr float cLifespan{ 10.f };
 		static constexpr float cShootInterval{ 0.5f };
 		static constexpr float cMoveSpeed{ 300.f };

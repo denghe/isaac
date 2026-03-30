@@ -13,11 +13,40 @@ namespace Test4 {
 
 	void Bullet1::Update() {
 		// 每隔一段时间发射一颗 2 级子弹. 随机移动. 每隔一段时间随机移动一次，持续一段时间，间隔一段时间
-		// todo: 碰撞检测
 
 		// 生命周期处理
-		if (scene->time >= deathTime) {
+		if (scene->time >= deathTime || !owner) {
+			// todo: 淡出
 			Dispose();	// unsafe
+			return;
+		}
+
+		// 碰撞检测
+		auto cri = scene->itemsGrid.PosToCRIndex(pos);
+		auto searchRange = radius * 2;
+		bool crossed{};
+		scene->itemsGrid.ForeachByRange(cri.y, cri.x, searchRange, gg.sgrdd, [&](decltype(scene->itemsGrid)::Node& node, float range)->void {
+			// 避开自身
+			if (node.value == this) return;
+			// 避开非怪
+			if (node.value->typeId != Monster::cTypeId) return;
+			// 避开主人
+			auto m = (Monster*)node.value;
+			if (m == owner.GetPointer()) return;
+			// 距离检测
+			auto d = pos - node.cache.pos;
+			auto mag2 = d.x * d.x + d.y * d.y;
+			auto r = radius + node.cache.radius;
+			auto rr = r * r;
+			// 未碰撞
+			if (mag2 > rr) return;
+			// 干掉目标
+			crossed = true;
+			node.value->Dispose();
+		});
+		// 如果碰到目标，自己也消失
+		if (crossed) {
+			TryDispose();
 			return;
 		}
 
@@ -27,6 +56,7 @@ namespace Test4 {
 			// 计算子弹的初始位置和属性
 			auto radians = gg.rnd.Next<float>(-M_PI, M_PI);
 			auto bulletPos = pos + XY{ cosf(radians), sinf(radians) } * radius;
+			bulletPos = FixPosition(bulletPos);
 			scene->items.Emplace().Emplace<Bullet2>()->Init(scene, bulletPos, 32.f, xx::WeakFromThis(this));
 		}
 
@@ -47,15 +77,14 @@ namespace Test4 {
 			while (moveLeftStep > 0) {
 				XX_YIELD(_1);
 				--moveLeftStep;
-				pos += moveInc;
-				// todo: sync pos to grid
+				SetPosition(pos + moveInc);
 			}
 		}
 		XX_END(_1);
 	}
 
 	void Bullet1::Draw() {
-		scene->DrawItem(gg.pics.c64_bullet, pos, radius * (1.f / 32.f));
+		scene->DrawItem(gg.pics.c64_bullet, pos, radius * (1.f / 32.f), owner->color);
 	}
 
 }
