@@ -23,6 +23,7 @@ namespace Test4 {
 		// 发射子弹处理
 		if (scene->time >= nextShootTime) {
 			nextShootTime += cShootInterval;
+			// todo: 检查创建数量上限
 			// 计算子弹的初始位置和属性
 			auto radians = gg.rnd.Next<float>(-M_PI, M_PI);
 			auto bulletPos = pos + XY{ cosf(radians), sinf(radians) } * radius;

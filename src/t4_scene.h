@@ -26,6 +26,7 @@ namespace Test4 {
 		void Draw() override;
 		void DrawItem(xx::Frame& f_, XY pos_, float scale_, xx::RGBA8 color_ = xx::RGBA8_White);
 
+		int32_t count{};
 		XY mapSize{}, mapCenterPos{};
 		static constexpr float cCellPixelSize{ 64.f };
 		static constexpr int32_t cNumMaxItems{ 100000 };

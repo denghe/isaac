@@ -66,10 +66,14 @@ namespace Test4 {
 			return;
 		}
 
+		// 驱动 FixedUpdate
 		SceneBase::Update();
 	}
 
 	void Scene::FixedUpdate() {
+		// 每帧开始时重置计数器
+		count = 0;
+
 		for (int i = items.len - 1; i >= 0;) {
 
 			// 帧逻辑. 可能会自杀，可能会删除其他对象
@@ -89,6 +93,7 @@ namespace Test4 {
 			o->Draw();
 		}
 
+		gg.uiText->SetText(xx::ToString("range search count: ", count));
 		SceneBase::Draw();
 	}
 

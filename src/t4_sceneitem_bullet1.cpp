@@ -16,16 +16,19 @@ namespace Test4 {
 
 		// 生命周期处理
 		if (scene->time >= deathTime || !owner) {
-			// todo: 淡出
+			// todo: 淡出? 为避免干扰查询，可以销毁对象并在当前坐标创建一个尸体特效
 			Dispose();	// unsafe
 			return;
 		}
 
 		// 碰撞检测
+		bool crossed{}, disposed{};
 		auto cri = scene->itemsGrid.PosToCRIndex(pos);
-		auto searchRange = radius * 2;
-		bool crossed{};
-		scene->itemsGrid.ForeachByRange(cri.y, cri.x, searchRange, gg.sgrdd, [&](decltype(scene->itemsGrid)::Node& node, float range)->void {
+		//auto searchRange = radius + 64.f;
+		//scene->itemsGrid.ForeachByRange(cri.y, cri.x, searchRange, gg.sgrdd, [&](decltype(scene->itemsGrid)::Node& node, float range)->void {
+		scene->itemsGrid.ForeachBy9(cri.y, cri.x, [&](decltype(scene->itemsGrid)::Node& node, float range)->void {
+			// 统计查询次数
+			++scene->count;
 			// 避开自身
 			if (node.value == this) return;
 			// 避开非怪
@@ -40,10 +43,17 @@ namespace Test4 {
 			auto rr = r * r;
 			// 未碰撞
 			if (mag2 > rr) return;
-			// 干掉目标
+			// 碰撞了
 			crossed = true;
+			// 持有当前类的弱引用，方便判断有效性
+			auto self = xx::WeakFromThis(this);
+			// 干掉目标. 有可能目标死亡时也递归杀死当前对象
 			node.value->Dispose();
+			// 如果当前对象被释放了, 标记一下
+			if (!self) disposed = true;
 		});
+		// 如果当前对象被释放了, 直接返回( 不能再访问所有成员 )
+		if (disposed) return;
 		// 如果碰到目标，自己也消失
 		if (crossed) {
 			TryDispose();
@@ -53,6 +63,7 @@ namespace Test4 {
 		// 发射子弹处理
 		if (scene->time >= nextShootTime) {
 			nextShootTime += cShootInterval;
+			// todo: 检查创建数量上限
 			// 计算子弹的初始位置和属性
 			auto radians = gg.rnd.Next<float>(-M_PI, M_PI);
 			auto bulletPos = pos + XY{ cosf(radians), sinf(radians) } * radius;
