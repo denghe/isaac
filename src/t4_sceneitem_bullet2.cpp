@@ -11,6 +11,7 @@ namespace Test4 {
 
 	void Bullet2::Update() {
 		// 随机移动. 每隔一段时间随机移动一次，持续一段时间，间隔一段时间
+		// todo: 碰撞检测
 
 		// 生命周期处理
 		if (scene->time >= deathTime) {

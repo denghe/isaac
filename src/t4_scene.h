@@ -10,6 +10,7 @@ namespace Test4 {
 		using SceneBase::SceneBase;
 
 		void Init() override;
+		void MakeUI() override;
 		void Update() override;
 		void FixedUpdate() override;
 		void Draw() override;

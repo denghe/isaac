@@ -5,7 +5,7 @@ namespace Test4 {
 
 	struct Monster : SceneItem {
 		static constexpr int32_t cTypeId{ __LINE__ };
-		static constexpr float cLifespan{ 100.f };
+		static constexpr float cLifespan{ 9999999.f };
 		static constexpr float cShootInterval{ 1.f };
 		int32_t _1{};
 		float deathTime{}, nextShootTime{};

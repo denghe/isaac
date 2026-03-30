@@ -12,10 +12,14 @@ namespace Test4 {
 
 	void Monster::Update() {
 		// 每隔一段时间发射一颗子弹. 静止不动. 可以活很久
+
+		// 生命周期处理
 		if (scene->time >= deathTime) {
 			Dispose();	// unsafe
 			return;
 		}
+
+		// 发射子弹处理
 		if (scene->time >= nextShootTime) {
 			nextShootTime += cShootInterval;
 			// 计算子弹的初始位置和属性

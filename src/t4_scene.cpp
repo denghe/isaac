@@ -29,6 +29,37 @@ namespace Test4 {
 		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ 1000, 0 }, 128.f);
 	}
 
+	void Scene::MakeUI() {
+		SceneBase::MakeUI();
+		static constexpr float cLineHeight{ 100 };
+		static constexpr float cItemHeight{ 80 };
+		static constexpr float cMargin{ 20 };
+		auto fontSize = cItemHeight - gg.embed.cfg_s9bN->paddings.TopBottom();
+
+		auto C = ui->Make<xx::Node>();
+		xx::Layouter L;
+		auto ds = gg.designSize;
+		auto ds_2 = ds / 2;
+		L.InitBegin(C, 2, gg.p5 + XY{ 0, ds_2.y }, { 0.5f, 1.f }, ds.x)
+			.HAlign(xx::HAligns::Center)
+			.LeftMargin(cMargin)
+			.DefaultLineHeight(cLineHeight);
+
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("game speed: 1x")).SetLabelBorder().onClicked = [this] {
+			timeScale = 1.f;
+			};
+
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("10x")).SetLabelBorder().onClicked = [this] {
+			timeScale = 10.f;
+			};
+
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)("100x")).SetLabelBorder().onClicked = [this] {
+			timeScale = 100.f;
+			};
+
+		L.InitEnd();
+	}
+
 	void Scene::Update() {
 		if (gg.keyboard[GLFW_KEY_ESCAPE](0.2f)) {
 			gg.MakeScene<MainMenu::Scene>()->Init();
