@@ -12,12 +12,15 @@ namespace Test4 {
 	}
 
 	void Bullet1::Update() {
-		// todo
-		// 每隔一段时间发射一颗 2 级子弹. 随机移动
+		// 每隔一段时间发射一颗 2 级子弹. 随机移动. 每隔一段时间随机移动一次，持续一段时间，间隔一段时间
+
+		// 生命周期处理
 		if (scene->time >= deathTime) {
 			Dispose();	// unsafe
 			return;
 		}
+
+		// 发射子弹处理
 		if (scene->time >= nextShootTime) {
 			nextShootTime += cShootInterval;
 			// 计算子弹的初始位置和属性
@@ -26,9 +29,10 @@ namespace Test4 {
 			scene->items.Emplace().Emplace<Bullet2>()->Init(scene, bulletPos, 32.f, xx::WeakFromThis(this));
 		}
 
-		// 移动处理. 每隔一段时间随机移动一次，持续一段时间，间隔一段时间
+		// 移动处理
 		XX_BEGIN(_1);
 		while (1) {
+			// "协程"代码中不可夹杂局部变量，必须放在括号里，且不能跨越 yield
 			{
 				// 计算要移动多久
 				auto duration = gg.rnd.Next(cMoveDuration);
