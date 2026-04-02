@@ -10,10 +10,10 @@ namespace Test4 {
 
 		void Dispose() override;
 
-		// 修正位置值( 计算地图边缘回卷 )，不更新 grid
+		// 修正位置值( 计算地图边缘回卷 )
 		XY FixPosition(XY pos_);
 
-		// 设置位置，更新 grid
+		// 设置位置
 		void SetPosition(XY pos_);
 	};
 

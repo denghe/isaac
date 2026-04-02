@@ -26,12 +26,12 @@ namespace Test4 {
 		void Draw() override;
 		void DrawItem(xx::Frame& f_, XY pos_, float scale_, xx::RGBA8 color_ = xx::RGBA8_White);
 
-		int32_t count{};
+		int32_t searchCount{}, createIgnoreCount{};
 		XY mapSize{}, mapCenterPos{};
-		static constexpr float cCellPixelSize{ 64.f };
+		static constexpr float cCellPixelSize{ 32.f };
 		static constexpr int32_t cNumMaxItems{ 100000 };
 		xx::List<xx::Shared<SceneItemBase>> items;
-		xx::Grid2dCircle<SceneItemBase*, GridCache> itemsGrid;
+		xx::Grid2dCircle<SceneItemBase*, GridCache> itemsGrid16, itemsGrid32, itemsGrid64;
 	};
 
 }

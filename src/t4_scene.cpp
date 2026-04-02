@@ -4,29 +4,30 @@
 #include "t4_sceneitem_monster.h"
 
 // 实现一套高效的 item 可随便增删的数组遍历逻辑
-// todo:
-// 需求是  空间中 有两只怪， 不断向周围发射  随机移动  的子弹。
-// 子弹有寿命，到期自杀。 
-// 子弹自杀时，会创建属于己方的二级子弹
-// 子弹碰到  对方时，可杀死对方，对方的子弹 同时消失
+// 需求是 空间中 有两只 怪，不断向周围发射随机移动的 子弹1
+// 子弹1 有寿命，到期自杀。期间随机移动，不断向周围发射  随机移动  的子弹2
+// 子弹1 或 2 碰到 对方怪时，可杀死对方怪，对方的子弹 同时消失
 
 namespace Test4 {
 
 	void Scene::Init() {
 		SceneBase::Init();
 
-		mapSize = { 1920 * 2, 1080 * 2 };
+		mapSize = { 1920 * 4, 1080 * 4 };
 		mapCenterPos = mapSize / 2;
 		cam.Init(gg.scale, gg.designSize.y / mapSize.y, mapCenterPos);
 
 		// 重要：需要大到足以避免 Resize 导致的指针失效. 所有创建行为都要检测个数上限
 		items.Reserve(cNumMaxItems);
-		itemsGrid.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize), std::ceilf(mapSize.x / cCellPixelSize));
-
+		
+		// 初始化空间索引容器
+		itemsGrid16.Init(16.f, std::ceilf(mapSize.y / 16.f), std::ceilf(mapSize.x / 16.f));
+		itemsGrid32.Init(32.f, std::ceilf(mapSize.y / 32.f), std::ceilf(mapSize.x / 32.f));
+		itemsGrid64.Init(64.f, std::ceilf(mapSize.y / 64.f), std::ceilf(mapSize.x / 64.f));
 
 		// 创建两只怪, 直接指定坐标
-		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ -1000, 0 }, 128.f, xx::RGBA8_Green);
-		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ 1000, 0 }, 128.f, xx::RGBA8_Blue);
+		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ -1200, 0 }, 128.f, xx::RGBA8_Green);
+		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ 1200, 0 }, 128.f, xx::RGBA8_Blue);
 	}
 
 	void Scene::MakeUI() {
@@ -72,7 +73,7 @@ namespace Test4 {
 
 	void Scene::FixedUpdate() {
 		// 每帧开始时重置计数器
-		count = 0;
+		searchCount = 0;
 
 		for (int i = items.len - 1; i >= 0;) {
 
@@ -93,7 +94,7 @@ namespace Test4 {
 			o->Draw();
 		}
 
-		gg.uiText->SetText(xx::ToString("range search count: ", count));
+		gg.uiText->SetText(xx::ToString("range search count: ", searchCount, " create ignore count: ", createIgnoreCount, " items.len = ", items.len));
 		SceneBase::Draw();
 	}
 

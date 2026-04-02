@@ -8,9 +8,8 @@ namespace Test4 {
 		typeId = typeId_;
 		indexAtContainer = scene->items.len - 1;
 		assert(scene_->items[indexAtContainer].pointer == this);
-		pos = pos_;
+		pos = FixPosition(pos_);
 		radius = radius_;
-		scene_->itemsGrid.Add(indexAtGrid, this);
 	}
 
 	void SceneItem::Dispose() {
@@ -18,15 +17,9 @@ namespace Test4 {
 		assert(!disposing);
 		assert(indexAtContainer != -1);
 		assert(scene->items[indexAtContainer].pointer == this);
-		assert(scene->itemsGrid.ValueAt(indexAtGrid) == this);
 
 		// 设置标记
 		disposing = true;
-
-		// 从 grid 中移除对象，避免被查询到
-		if (indexAtGrid != -1) {
-			scene->itemsGrid.Remove(indexAtGrid, this);
-		}
 
 		// 进一步释放资源，事件逻辑
 		OnDispose();
@@ -47,28 +40,14 @@ namespace Test4 {
 		assert(pos_.y > -ms.y && pos_.y < ms.y * 2);
 		if (pos_.y < 0) pos_.y += ms.y;
 		else if (pos_.y >= ms.y) pos_.y -= ms.y;
+		if (pos_.x == ms.x) pos_.x = 0.f;
+		if (pos_.y == ms.y) pos_.y = 0.f;
 		return pos_;
 	}
 
 	void SceneItem::SetPosition(XY pos_) {
 		if (pos_ == pos) return;
 		pos = FixPosition(pos_);
-		// 新的 pos 值同步到空间索引 grid
-		scene->itemsGrid.Update(indexAtGrid, this);
 	}
 
-	//// 碰撞检测示例
-	//void SceneItem::RangeSearch() {
-	//	auto cri = scene->itemsGrid.PosToCRIndex(pos);
-	//	static constexpr float cCollectRange{ cFactoryRadius * 2 };
-	//	scene->itemsGrid.ForeachByRange(cri.y, cri.x, cCollectRange + 64, gg.sgrdd, [&](decltype(scene->gridMaterials)::Node& node, float range)
-	//		->void {
-	//			auto d = pos - node.cache.pos;
-	//			auto mag2 = d.x * d.x + d.y * d.y;
-	//			static constexpr float rr = cCollectRange * cCollectRange;
-	//			if (mag2 >= rr || mag2 <= 0.0001f) return;	// not cross?
-	//			flyingWoods.Emplace().Emplace()->Init(this, node.value);
-	//			node.value->Dispose();
-	//		});
-	//}
 }

@@ -17,6 +17,8 @@ namespace Test4 {
 		void Init(Scene* scene_, XY pos_, float radius_, xx::Weak<Bullet1> mother_);
 		void Update() override;
 		void Draw() override;
+		void OnDispose() override;
+		void SetPosition(XY pos_);
 	};
 
 }

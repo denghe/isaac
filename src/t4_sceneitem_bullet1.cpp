@@ -6,6 +6,7 @@ namespace Test4 {
 
 	void Bullet1::Init(Scene* scene_, XY pos_, float radius_, xx::Weak<Monster> owner_) {
 		SceneItemInit(cTypeId, scene_, pos_, radius_);
+		scene_->itemsGrid32.Add(indexAtGrid, this);
 		owner = std::move(owner_);
 		deathTime = scene->time + cLifespan;
 		nextShootTime = scene->time + cShootInterval;
@@ -23,16 +24,17 @@ namespace Test4 {
 
 		// 碰撞检测
 		bool crossed{}, disposed{};
-		auto cri = scene->itemsGrid.PosToCRIndex(pos);
+		auto cri = scene->itemsGrid64.PosToCRIndex(pos);
 		//auto searchRange = radius + 64.f;
-		//scene->itemsGrid.ForeachByRange(cri.y, cri.x, searchRange, gg.sgrdd, [&](decltype(scene->itemsGrid)::Node& node, float range)->void {
-		scene->itemsGrid.ForeachBy9(cri.y, cri.x, [&](decltype(scene->itemsGrid)::Node& node, float range)->void {
+		//scene->itemsGrid64.ForeachByRange(cri.y, cri.x, searchRange, gg.sgrdd, [&](decltype(scene->itemsGrid64)::Node& node, float range)->void {
+		scene->itemsGrid64.ForeachBy9(cri.y, cri.x, [&](decltype(scene->itemsGrid64)::Node& node, float range)->void {
 			// 统计查询次数
-			++scene->count;
-			// 避开自身
-			if (node.value == this) return;
-			// 避开非怪
-			if (node.value->typeId != Monster::cTypeId) return;
+			++scene->searchCount;
+			//// 避开自身
+			//if (node.value == this) return;
+			//// 避开非怪
+			//if (node.value->typeId != Monster::cTypeId) return;
+			assert(node.value->typeId == Monster::cTypeId);
 			// 避开主人
 			auto m = (Monster*)node.value;
 			if (m == owner.GetPointer()) return;
@@ -61,9 +63,13 @@ namespace Test4 {
 		}
 
 		// 发射子弹处理
-		if (scene->time >= nextShootTime) {
+		while (scene->time >= nextShootTime) {
 			nextShootTime += cShootInterval;
-			// todo: 检查创建数量上限
+			// 如果对象创建数量达到上限，直接跳过创建
+			if (scene->items.len >= Scene::cNumMaxItems) {
+				++scene->createIgnoreCount;
+				continue;
+			}
 			// 计算子弹的初始位置和属性
 			auto radians = gg.rnd.Next<float>(-M_PI, M_PI);
 			auto bulletPos = pos + XY{ cosf(radians), sinf(radians) } * radius;
@@ -98,4 +104,17 @@ namespace Test4 {
 		scene->DrawItem(gg.pics.c64_bullet, pos, radius * (1.f / 32.f), owner->color);
 	}
 
+	void Bullet1::OnDispose() {
+		// 从 grid 中移除对象，避免被查询到
+		if (indexAtGrid != -1) {
+			assert(scene->itemsGrid32.ValueAt(indexAtGrid) == this);
+			scene->itemsGrid32.Remove(indexAtGrid, this);
+		}
+	}
+
+	void Bullet1::SetPosition(XY pos_) {
+		SceneItem::SetPosition(pos_);
+		// 新的 pos 值同步到空间索引 grid
+		scene->itemsGrid32.Update(indexAtGrid, this);
+	}
 }
