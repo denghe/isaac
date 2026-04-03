@@ -4,11 +4,10 @@
 namespace Test1 {
 
 	struct Wall : SceneItem {
-		static constexpr int32_t cTypeId{ __LINE__ };
+		static constexpr int32_t cTypeId{ 1 };
 		void Init(Scene* scene_, XY pos_);
 		void Draw() override;
-		void Dispose() override;	// unsafe
-		~Wall() override;
+		void Dispose() override;
 	};
 
 }

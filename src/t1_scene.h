@@ -1,14 +1,8 @@
 ﻿#pragma once
-#include "t1.h"
-#include "g_scenebase.h"
+#include "t1_sceneitem.h"
 #include <xx_grid2d_circle.h>
 
 namespace Test1 {
-
-	struct Scene;
-	struct SceneItem : Global::SceneItemBase {
-		Scene* scene{};
-	};
 
 	struct Wall;
 	struct Door;

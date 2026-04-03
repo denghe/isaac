@@ -11,9 +11,10 @@ namespace Test1 {
 		radius = cPlayerRadius;
 		scale = radius * 2.f / gg.pics.cell_player.uvRect.w;
 		radians = {};
+
 		indexAtContainer = scene->players.len - 1;
 		assert(scene->players[indexAtContainer].pointer == this);
-		//scene->gridItems.Add(indexAtGrid, this);
+
 		indexAtGrid = scene->phys->Add(this);
 	}
 
@@ -140,18 +141,25 @@ namespace Test1 {
 	}
 
 	void Player::Dispose() {
+		assert(scene);
+		assert(!disposing);
+		assert(indexAtContainer != -1);
+		auto& container = scene->players;
+		assert(container[indexAtContainer].pointer == this);
+
+		// 设置标记
+		disposing = true;
+
+		// 进一步释放资源
+		if (indexAtGrid > -1) {
+			scene->phys->Remove(indexAtGrid);
+		}
+
+		// 从容器中移除对象( 释放内存 )
 		auto i = indexAtContainer;
-		assert(scene->players[i].pointer == this);
-		scene->players.Back()->indexAtContainer = i;
+		container.Back()->indexAtContainer = i;
 		indexAtContainer = -1;
-		scene->players.SwapRemoveAt(i);
+		container.SwapRemoveAt(i);
 	}
 
-	Player::~Player() {
-		if (indexAtGrid > -1) {
-			//scene->gridItems.Remove(indexAtGrid, this);
-			scene->phys->Remove(indexAtGrid);
-			indexAtGrid = -1;
-		}
-	}
 }

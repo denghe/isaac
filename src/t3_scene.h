@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "game.h"
 #include "mm_scene.h"
 #include "g_scenebase.h"
 

@@ -79,7 +79,7 @@ namespace Test1 {
 		return ni;
 	}
 
-	void PhysSystem::Remove(int32_t indexAtNodes_) {
+	void PhysSystem::Remove(int32_t& indexAtNodes_) {
 		assert(buckets);
 		assert(indexAtNodes_ >= 0 && indexAtNodes_ < count);
 		assert(nodes[indexAtNodes_].ud);
@@ -96,6 +96,8 @@ namespace Test1 {
 		n.ud = {};
 		freeHead = indexAtNodes_;
 		freeCount++;
+
+		indexAtNodes_ = -1;
 	}
 
 	void PhysSystem::ClearBuckets() {

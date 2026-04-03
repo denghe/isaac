@@ -12,8 +12,10 @@ namespace Test1 {
 		scale = radius * 2.f / gg.pics.cell_wall.uvRect.w;
 		radians = {};
 		isCenter = isCenter_;
+
 		indexAtContainer = scene->doors.len - 1;
 		assert(scene->doors[indexAtContainer].pointer == this);
+
 		scene->gridBuildings.Add(indexAtGrid, this);
 	}
 
@@ -23,17 +25,25 @@ namespace Test1 {
 	}
 
 	void Door::Dispose() {
-		auto i = indexAtContainer;
-		assert(scene->doors[i].pointer == this);
-		scene->doors.Back()->indexAtContainer = i;
-		indexAtContainer = -1;
-		scene->doors.SwapRemoveAt(i);
-	}
+		assert(scene);
+		assert(!disposing);
+		assert(indexAtContainer != -1);
+		auto& container = scene->doors;
+		assert(container[indexAtContainer].pointer == this);
 
-	Door::~Door() {
+		// 设置标记
+		disposing = true;
+
+		// 进一步释放资源
 		if (indexAtGrid > -1) {
 			scene->gridBuildings.Remove(indexAtGrid, this);
 		}
+
+		// 从容器中移除对象( 释放内存 )
+		auto i = indexAtContainer;
+		container.Back()->indexAtContainer = i;
+		indexAtContainer = -1;
+		container.SwapRemoveAt(i);
 	}
 
 }

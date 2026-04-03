@@ -6,7 +6,7 @@ namespace Global {
 
 	struct SceneItemBase {
 		/* for copy code
-		static constexpr int32_t cTypeId{ __LINE__ };
+		static constexpr int32_t cTypeId{ ???? };
 		*/
 
 		// 用于 switch case 逻辑，避免 dynamic_cast 带来的性能问题
@@ -103,64 +103,3 @@ namespace Global {
 	};
 
 }
-
-/* for copy code
-
-	struct Scene : Global::SceneBase {
-		using Base = Global::SceneBase;
-		using Base::Base;
-		using SceneItemBase = Global::SceneItemBase;
-
-		void Init() override;
-		void Update() override;
-		void FixedUpdate() override;
-		void Draw() override;
-		void DrawItem(xx::Frame& f_, XY pos_, float scale_);
-
-		XY mapSize{}, mapCenterPos{};
-		static constexpr float cCellPixelSize{ 64.f };
-		static constexpr int32_t cNumMaxItems{ 100000 };
-		xx::List<xx::Shared<SceneItemBase>> items;
-		xx::Grid2dCircle<SceneItemBase*> itemsGrid;	// todo: cache
-	};
-
-	struct SceneItem : Global::SceneItemBase {
-		Scene* scene{};
-
-		void SceneItemInit(int32_t typeId_, Scene* scene_, XY pos_, float radius_) {
-			scene = scene_;
-			typeId = typeId_;
-			indexAtContainer = scene->items.len - 1;
-			assert(scene_->items[indexAtContainer].pointer == this);
-			pos = pos_;
-			radius = radius_;
-			scene_->itemsGrid.Add(indexAtGrid, this);
-		}
-
-		void Dispose() override {
-			assert(scene);
-			assert(!disposing);
-			assert(indexAtContainer != -1);
-			assert(scene->items[indexAtContainer].pointer == this);
-			assert(scene->itemsGrid.ValueAt(indexAtGrid) == this);
-
-			// 设置标记
-			disposing = true;
-
-			// 从 grid 中移除对象，避免被查询到
-			if (indexAtGrid != -1) {
-				scene->itemsGrid.Remove(indexAtGrid, this);
-			}
-
-			// 进一步释放资源，事件逻辑
-			OnDispose();
-
-			// 从容器中移除对象( 释放内存 )
-			auto i = indexAtContainer;
-			scene->items.Back()->indexAtContainer = i;
-			indexAtContainer = -1;
-			scene->items.SwapRemoveAt(i);	// unsafe: release memory
-		}
-	};
-
-*/

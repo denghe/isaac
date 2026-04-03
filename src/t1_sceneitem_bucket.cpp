@@ -11,9 +11,10 @@ namespace Test1 {
 		radius = cBucketRadius;
 		scale = radius * 2.f / gg.pics.cell_bucket.uvRect.w;
 		radians = {};
+
 		indexAtContainer = scene->buckets.len - 1;
 		assert(scene->buckets[indexAtContainer].pointer == this);
-		//scene->gridItems.Add(indexAtGrid, this);
+
 		indexAtGrid = scene->phys->Add(this);
 	}
 
@@ -27,19 +28,25 @@ namespace Test1 {
 	}
 
 	void Bucket::Dispose() {
-		auto i = indexAtContainer;
-		assert(scene->buckets[i].pointer == this);
-		scene->buckets.Back()->indexAtContainer = i;
-		indexAtContainer = -1;
-		scene->buckets.SwapRemoveAt(i);
-	}
+		assert(scene);
+		assert(!disposing);
+		assert(indexAtContainer != -1);
+		auto& container = scene->buckets;
+		assert(container[indexAtContainer].pointer == this);
 
-	Bucket::~Bucket() {
+		// 设置标记
+		disposing = true;
+
+		// 进一步释放资源
 		if (indexAtGrid > -1) {
-			//scene->gridItems.Remove(indexAtGrid, this);
 			scene->phys->Remove(indexAtGrid);
-			indexAtGrid = -1;
 		}
+
+		// 从容器中移除对象( 释放内存 )
+		auto i = indexAtContainer;
+		container.Back()->indexAtContainer = i;
+		indexAtContainer = -1;
+		container.SwapRemoveAt(i);
 	}
 
 }

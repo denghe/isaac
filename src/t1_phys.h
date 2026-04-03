@@ -49,7 +49,7 @@ namespace Test1 {
 		void Init(Scene* scene_, int32_t capacity_ = 0);
 		void Reserve(int32_t capacity_);
 		int32_t Add(SceneItem* ud_);	// return indexAtNodes
-		void Remove(int32_t indexAtNodes_);
+		void Remove(int32_t& indexAtNodes_);
 		void ClearBuckets();
 		void FillBuckets();
 		void CalcDatas();
