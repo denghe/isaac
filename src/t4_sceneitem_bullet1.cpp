@@ -80,11 +80,10 @@ namespace Test4 {
 		// 移动处理
 		XX_BEGIN(_1);
 		while (1) {
-			// "协程"代码中不可夹杂局部变量，必须放在括号里，且不能跨越 yield
+			// 设置移动方向和持续时间
 			{
 				// 计算要移动多久
-				auto duration = gg.rnd.Next(cMoveDuration);
-				moveLeftStep = std::ceilf(duration * gg.cFps);
+				moveLeftStep = std::ceilf(gg.rnd.Next(cMoveDuration) * gg.cFps);
 				// 随机选一个移动方向
 				auto radians = gg.rnd.Next<float>(-M_PI, M_PI);
 				// 计算移动增量
@@ -95,6 +94,13 @@ namespace Test4 {
 				XX_YIELD(_1);
 				--moveLeftStep;
 				SetPosition(pos + moveInc);
+			}
+			// 计算要休息多少帧
+			moveLeftStep = std::ceilf(gg.rnd.Next(cMoveInterval) * gg.cFps);
+			// 休息
+			while (moveLeftStep > 0) {
+				XX_YIELD(_1);
+				--moveLeftStep;
 			}
 		}
 		XX_END(_1);

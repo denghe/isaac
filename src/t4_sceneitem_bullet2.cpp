@@ -66,8 +66,7 @@ namespace Test4 {
 			// 设置移动方向和持续时间
 			{
 				// 计算要移动多少帧
-				auto duration = gg.rnd.Next(cMoveDuration);
-				moveLeftStep = std::ceilf(duration * gg.cFps);
+				moveLeftStep = std::ceilf(gg.rnd.Next(cMoveDuration) * gg.cFps);
 				// 随机选一个移动方向
 				auto radians = gg.rnd.Next<float>(-M_PI, M_PI);
 				// 计算移动增量
@@ -79,12 +78,8 @@ namespace Test4 {
 				--moveLeftStep;
 				SetPosition(pos + moveInc);
 			}
-			// 设置要休息多久
-			{
-				// 计算要休息多少帧
-				auto duration = gg.rnd.Next(cMoveInterval);
-				moveLeftStep = std::ceilf(duration * gg.cFps);
-			}
+			// 计算要休息多少帧
+			moveLeftStep = std::ceilf(gg.rnd.Next(cMoveInterval) * gg.cFps);
 			// 休息
 			while (moveLeftStep > 0) {
 				XX_YIELD(_1);

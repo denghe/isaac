@@ -74,6 +74,7 @@ namespace Test4 {
 	void Scene::FixedUpdate() {
 		// 每帧开始时重置计数器
 		searchCount = 0;
+		createIgnoreCount = 0;
 
 		for (int i = items.len - 1; i >= 0;) {
 
