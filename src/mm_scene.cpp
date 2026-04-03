@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "mm_scene.h"
-#include "s_test1.h"
-#include "s_test2.h"
-#include "s_test3.h"
+#include "t1_.h"
+#include "t2_scene.h"
+#include "t3_scene.h"
 #include "t4_scene.h"
 
 namespace MainMenu {
