@@ -53,7 +53,7 @@ namespace Test1 {
 		}
 	}
 
-	void PhysSystem::Fill() {
+	void PhysSystem::FillBuckets() {
 		assert(buckets);
 		for (int32_t i = 0; i < bucketsLen; ++i) {
 			buckets[i].len = 0;
@@ -189,7 +189,7 @@ namespace Test1 {
 	}
 
 	void PhysSystem::Step() {
-		Fill();
+		FillBuckets();
 		Calc();
 		Writeback();
 	}

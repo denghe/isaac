@@ -37,13 +37,11 @@ namespace Test1 {
 		Node& At(int32_t indexAtNodes_) const;
 
 		void Init(Scene* scene_, int32_t capacity_ = 0);
-		void Reserve(int32_t capacity_);
 		void Add(SceneItem* item_);
 		void Remove(SceneItem* item_);
 		void TryRemove(SceneItem* item_);
 
-		void ClearBuckets();
-		void Fill();
+		void FillBuckets();
 		void Calc();
 		void CalcBB(Bucket& b1_, Bucket& b2_);
 		void CalcNN(Node& n1_, Node& n2_);
