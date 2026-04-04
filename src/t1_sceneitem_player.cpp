@@ -112,7 +112,7 @@ namespace Test1 {
 		}
 
 
-		scene->phys->At(indexAtGrid).acc += acc;
+		scene->phys->At(this).acc += acc;
 	}
 
 	void Player::Draw() {
