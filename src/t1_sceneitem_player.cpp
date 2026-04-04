@@ -103,26 +103,6 @@ namespace Test1 {
 			speed.y = 0;
 		}
 
-		//// new pos calc
-		//auto newPos = pos;
-		//if (speed.x != 0 || speed.y != 0) {
-		//	if (speed.x != 0 && speed.y != 0) {
-		//		newPos += speed * 0.7071f;
-		//	}
-		//	else {
-		//		newPos += speed;
-		//	}
-
-		//	// todo: some check?
-		//}
-
-		//// move
-		//if (pos != newPos) {
-		//	pos = newPos;
-		//	y = pos.y;
-		//	scene->gridItems.Update(indexAtGrid, this);
-		//}
-
 		XY acc;
 		if (speed.x != 0 && speed.y != 0) {
 			acc = speed * 0.7071f;

@@ -23,8 +23,7 @@ namespace Test1 {
 	struct Scene : SceneBase {
 		XY mapSize{};
 		xx::Grid2dCircle<SceneItem*, GridCache> gridBuildings;	// for walls, doors
-		//xx::Grid2dCircle<SceneItem*, GridCache> gridItems;	// for buckets, players, ...
-		xx::Shared<PhysSystem> phys;
+		xx::Shared<PhysSystem> phys;	// for players, buckets
 		xx::List<xx::Shared<Wall>> walls;
 		xx::List<xx::Shared<Door>> doors;
 		xx::List<xx::Shared<Bucket>> buckets;

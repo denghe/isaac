@@ -8,7 +8,7 @@ namespace Test1 {
 	struct PhysSystem {
 		static constexpr float eps{ 0.0001f };
 		static constexpr float cVelocityDamping{ 300.f };
-		//static constexpr float cGravity{ 100.f };
+		static constexpr XY cGravity{ 0, 0/*100.f*/ };
 		static constexpr float cResponseCoef{ 0.5f };
 		static constexpr float cMaxSpeed{ 500.f / gg.cFps };
 
@@ -25,7 +25,7 @@ namespace Test1 {
 		struct Data {
 			int32_t indexAtNodes;
 			float radius{};
-			XY pos, lpos, acc;
+			XY pos, lastPos, acc;
 		};
 
 		struct Bucket {
@@ -46,16 +46,19 @@ namespace Test1 {
 		std::unique_ptr<Bucket[]> buckets;
 
 		Data& At(int32_t indexAtNodes_);
+
 		void Init(Scene* scene_, int32_t capacity_ = 0);
 		void Reserve(int32_t capacity_);
 		int32_t Add(SceneItem* ud_);	// return indexAtNodes
 		void Remove(int32_t& indexAtNodes_);
+
 		void ClearBuckets();
 		void FillBuckets();
 		void CalcDatas();
-		void Calc(Bucket& b1_, Bucket& b2_);
-		void Calc(Data& d1_, Data& d2_);
+		void CalcBB(Bucket& b1_, Bucket& b2_);
+		void CalcDD(Data& d1_, Data& d2_);
 		void UpdateDatas();
+
 		void Update();
 	};
 

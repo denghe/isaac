@@ -73,7 +73,7 @@ namespace Test1 {
 		d.indexAtNodes = ni;
 		d.radius = radius_;
 		d.pos = pos_;
-		d.lpos = pos_;
+		d.lastPos = pos_;
 		d.acc = 0;
 
 		return ni;
@@ -122,27 +122,27 @@ namespace Test1 {
 		for (int32_t bi = 0; bi < bucketsLen; ++bi) {
 			auto& b = buckets[bi];
 			if (!b.len) continue;
-			Calc(b, buckets[bi - 1]);
-			Calc(b, buckets[bi]);
-			Calc(b, buckets[bi + 1]);
-			Calc(b, buckets[bi + numRows - 1]);
-			Calc(b, buckets[bi + numRows]);
-			Calc(b, buckets[bi + numRows + 1]);
-			Calc(b, buckets[bi - numRows - 1]);
-			Calc(b, buckets[bi - numRows]);
-			Calc(b, buckets[bi - numRows + 1]);
+			CalcBB(b, buckets[bi - 1]);
+			CalcBB(b, buckets[bi]);
+			CalcBB(b, buckets[bi + 1]);
+			CalcBB(b, buckets[bi + numRows - 1]);
+			CalcBB(b, buckets[bi + numRows]);
+			CalcBB(b, buckets[bi + numRows + 1]);
+			CalcBB(b, buckets[bi - numRows - 1]);
+			CalcBB(b, buckets[bi - numRows]);
+			CalcBB(b, buckets[bi - numRows + 1]);
 		}
 	}
 
-	void PhysSystem::Calc(Bucket& b1_, Bucket& b2_) {
+	void PhysSystem::CalcBB(Bucket& b1_, Bucket& b2_) {
 		for (int32_t di1 = 0; di1 < b1_.len; ++di1) {
 			for (int32_t di2 = 0; di2 < b2_.len; ++di2) {
-				Calc(datas[b1_.indexAtDatass[di1]], datas[b2_.indexAtDatass[di2]]);
+				CalcDD(datas[b1_.indexAtDatass[di1]], datas[b2_.indexAtDatass[di2]]);
 			}
 		}
 	}
 
-	void PhysSystem::Calc(Data& d1_, Data& d2_) {
+	void PhysSystem::CalcDD(Data& d1_, Data& d2_) {
 		auto d = d1_.pos - d2_.pos;
 		auto mag2 = d.x * d.x + d.y * d.y;
 		auto r = d1_.radius + d2_.radius;
@@ -171,7 +171,7 @@ namespace Test1 {
 		for (int32_t i = 0; i < datasLen; ++i) {
 			auto& o = datas[i];
 			auto ud = nodes[o.indexAtNodes].ud;
-			//o.acc += XY{ 0, cGravity };
+			o.acc += cGravity;
 
 #if 0
 			// edge protection
@@ -189,7 +189,7 @@ namespace Test1 {
 			}
 #endif
 
-			auto spd = o.pos - o.lpos;
+			auto spd = o.pos - o.lastPos;
 			auto vd = cVelocityDamping;
 			if (ud->typeId == Player::cTypeId) {
 				vd = cVelocityDamping * 3.f;
@@ -197,16 +197,19 @@ namespace Test1 {
 
 			spd = spd + (o.acc - spd * vd) * (gg.cDelta * gg.cDelta);
 			// max speed limit
-			//if (spd.x * spd.x + spd.y * spd.y > cMaxSpeed * cMaxSpeed) {
-			//	auto mag = std::sqrtf(spd.x * spd.x + spd.y * spd.y);
-			//	spd = spd / mag * cMaxSpeed;
-			//}
+#if 0
+			if (spd.x * spd.x + spd.y * spd.y > cMaxSpeed * cMaxSpeed) {
+				auto mag = std::sqrtf(spd.x * spd.x + spd.y * spd.y);
+				spd = spd / mag * cMaxSpeed;
+			}
+#else
 			if (spd.x > cMaxSpeed) spd.x = cMaxSpeed;
 			else if (spd.x < -cMaxSpeed) spd.x = -cMaxSpeed;
 			if (spd.y > cMaxSpeed) spd.y = cMaxSpeed;
 			else if (spd.y < -cMaxSpeed) spd.y = -cMaxSpeed;
+#endif
 
-			o.lpos = o.pos;
+			o.lastPos = o.pos;
 			o.pos = o.pos + spd;
 			o.acc = {};
 
