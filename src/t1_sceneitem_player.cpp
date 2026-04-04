@@ -20,8 +20,9 @@ namespace Test1 {
 
 	void Player::Update() {
 
-		// input check
+		// 玩家输入逻辑，支持同时按下相反方向键时切换到另一个方向
 		XY moveDir{};
+		// x
 		if ((gg.keyboard[GLFW_KEY_A])
 			&& gg.keyboard[GLFW_KEY_D]) {
 			if (lastMoveDir.x == -1) {
@@ -43,7 +44,7 @@ namespace Test1 {
 		else {
 			lastMoveDir.x = moveDir.x = 0;
 		}
-
+		// y
 		if ((gg.keyboard[GLFW_KEY_W])
 			&& gg.keyboard[GLFW_KEY_S]) {
 			if (lastMoveDir.y == -1) {
@@ -66,7 +67,7 @@ namespace Test1 {
 			lastMoveDir.y = moveDir.y = 0;
 		}
 
-		// speed calc
+		// 计算移动速度
 		if (moveDir.x == 1) {		// right
 			if (speed.x < 0) speed.x = 0;
 			speed.x += cAccel.x;
@@ -102,17 +103,17 @@ namespace Test1 {
 		else {
 			speed.y = 0;
 		}
-
-		XY acc;
+		
+		// 对角线方向加速修正
+		XY accel;
 		if (speed.x != 0 && speed.y != 0) {
-			acc = speed * 0.7071f;
+			accel = speed * 0.7071f;
 		}
 		else {
-			acc = speed;
+			accel = speed;
 		}
-
-
-		scene->phys->At(this).acc += acc;
+		// 物理附加加速度
+		scene->phys->At(this).accel += accel;
 	}
 
 	void Player::Draw() {

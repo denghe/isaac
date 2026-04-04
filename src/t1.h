@@ -1,11 +1,13 @@
 ﻿#pragma once
 #include "game.h"
 
-// simulate isaac game scene
+// 模拟 isaac 这个游戏的一小部分（物理，道具，技能啥的）
 
 // todo: big map camera logic
 
 namespace Test1 {
+	// 这里放置一些常量
+
 	static constexpr float cUIScale{ 0.5f };
 
 	static constexpr float cCellPixelSize{ 128 };

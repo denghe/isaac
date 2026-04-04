@@ -6,7 +6,7 @@ namespace Global {
 
 	struct SceneItemBase {
 		/* for copy code
-		static constexpr int32_t cTypeId{ ???? };
+		static constexpr int32_t cTypeId{ ???? };	// 跨类唯一
 		*/
 
 		// 用于 switch case 逻辑，避免 dynamic_cast 带来的性能问题
