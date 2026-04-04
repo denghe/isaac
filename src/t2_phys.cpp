@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
-#include "t1_.h"
+#include "t2_.h"
 
-namespace Test1 {
+namespace Test2 {
 
 	PhysSystem::Node& PhysSystem::At(SceneItem* item_) const {
 		return (Node&)nodes[item_->indexAtGrid];

@@ -1,11 +1,12 @@
 ﻿#pragma once
 #include "t2_scene.h"
 
-namespace Test1 {
+namespace Test2 {
 
-	struct Wall : SceneItem {
-		static constexpr int32_t cTypeId{ 1 };
+	struct Bucket : SceneItem {
+		static constexpr int32_t cTypeId{ 4 };
 		void Init(Scene* scene_, XY pos_);
+		void Update() override;
 		void Draw() override;
 		void Dispose() override;
 	};

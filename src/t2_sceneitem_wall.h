@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "t2_scene.h"
+#include "t1_scene.h"
 
-namespace Test1 {
+namespace Test2 {
 
 	struct Wall : SceneItem {
 		static constexpr int32_t cTypeId{ 1 };

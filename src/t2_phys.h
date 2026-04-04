@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "t1.h"
+#include "t2.h"
 
-namespace Test1 {
+namespace Test2 {
 
 	// 物理系统，负责处理物体的运动和碰撞
 	// 依赖 Scene 的 gridBuildings pixelSize
