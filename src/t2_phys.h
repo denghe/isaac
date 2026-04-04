@@ -7,6 +7,8 @@ namespace Test2 {
 	// 依赖 Scene 的 gridBuildings pixelSize
 	// 依赖 SceneItem 的 pos radius indexAtGrid typeId
 
+	// todo: 提供针对 buckets 的 范围查询 接口
+
 	struct Scene;
 	struct SceneItem;
 	struct PhysSystem {
@@ -29,16 +31,10 @@ namespace Test2 {
 			XY pos, lastPos, accel;
 			// 碰撞半径
 			float radius{};
+			// 指向桶链表下一个节点, -1 代表链表末尾
+			int32_t nextNodeIndex{};
 			// 指向对象，方便回写数据
 			SceneItem* item{};
-		};
-
-		// 桶节点。记录当前格子存在哪些对象
-		struct Bucket {
-			int32_t len;
-			// 理论上讲如果是相同大小的 items 均匀分布在地图上，平均每个桶里应该不超过 3 个 item
-			// 如果大小不一，则该值可能需要改大
-			std::array<int32_t, 3> indexAtNodess;
 		};
 
 		// 指向场景，方便访问场景数据( 比如地图尺寸，物体列表 )
@@ -50,7 +46,7 @@ namespace Test2 {
 		// 节点数组( 起到对象池 缓存的作用 )
 		xx::List<Node> nodes;
 		// 桶数组( 仅用于 Step 计算 )
-		std::unique_ptr<Bucket[]> buckets;
+		std::unique_ptr<int32_t[]> buckets;
 
 		// 初始化，capacity 是 nodes 的预分配数量
 		void Init(Scene* scene_, int32_t capacity_ = 1024);
@@ -67,7 +63,7 @@ namespace Test2 {
 		// 下面是 Step 的具体步骤
 		void FillBuckets();
 		void Calc();
-		void CalcBB(Bucket& b1_, Bucket& b2_);
+		void CalcBB(int32_t b1_, int32_t b2_);
 		void CalcNN(Node& n1_, Node& n2_);
 		void Writeback();
 	};

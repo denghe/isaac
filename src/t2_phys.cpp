@@ -14,7 +14,7 @@ namespace Test2 {
 		numRows = std::ceilf(pixelSize.y / cCellPixelSize);
 		numCols = std::ceilf(pixelSize.x / cCellPixelSize);
 		bucketsLen = numRows * numCols;
-		buckets = std::make_unique_for_overwrite<Bucket[]>(bucketsLen);
+		buckets = std::make_unique_for_overwrite<int32_t[]>(bucketsLen);
 		nodes.Reserve(capacity_);
 	}
 
@@ -60,45 +60,52 @@ namespace Test2 {
 	void PhysSystem::FillBuckets() {
 		assert(buckets);
 		// 清空桶
-		for (int32_t i = 0; i < bucketsLen; ++i) {
-			buckets[i].len = 0;
-		}
+		memset(buckets.get(), 255, bucketsLen * sizeof(int32_t));
 		// 把节点下标放入桶: 根据节点位置计算桶索引
-		// 只能放有限数量的节点，超过会被丢弃( 不参与碰撞检测 )
 		for (int32_t len = nodes.len, i = 0; i < len; ++i) {
 			auto p = (nodes[i].pos * _1_cellSize).As<int32_t>();
 			assert(p.x >= 0 && p.x < numCols && p.y >= 0 && p.y < numRows);
 			auto& b = buckets[p.x * numRows + p.y];
-			if (b.len < b.indexAtNodess.size()) {
-				b.indexAtNodess[b.len++] = i;
-			}
+			auto head = b;
+			b = i;
+			nodes[i].nextNodeIndex = head;
 		}
 	}
 
 	void PhysSystem::Calc() {
 		for (int32_t bi = 0; bi < bucketsLen; ++bi) {
-			auto& b = buckets[bi];
-			if (!b.len) continue;
+			auto& b1 = buckets[bi];
+			if (b1 < 0) continue;
 			// 9格检测，当前格子和周围8格，越界的格子会被丢弃( 不参与碰撞检测 )
-			CalcBB(b, buckets[bi - 1]);
-			CalcBB(b, buckets[bi]);
-			CalcBB(b, buckets[bi + 1]);
-			CalcBB(b, buckets[bi + numRows - 1]);
-			CalcBB(b, buckets[bi + numRows]);
-			CalcBB(b, buckets[bi + numRows + 1]);
-			CalcBB(b, buckets[bi - numRows - 1]);
-			CalcBB(b, buckets[bi - numRows]);
-			CalcBB(b, buckets[bi - numRows + 1]);
+			if (auto b2 = buckets[bi - 1]; b2 >= 0) CalcBB(b1, b2);
+			if (auto b2 = buckets[bi]; b2 >= 0) CalcBB(b1, b2);
+			if (auto b2 = buckets[bi + 1]; b2 >= 0) CalcBB(b1, b2);
+			if (auto b2 = buckets[bi + numRows - 1]; b2 >= 0) CalcBB(b1, b2);
+			if (auto b2 = buckets[bi + numRows]; b2 >= 0) CalcBB(b1, b2);
+			if (auto b2 = buckets[bi + numRows + 1]; b2 >= 0) CalcBB(b1, b2);
+			if (auto b2 = buckets[bi - numRows - 1]; b2 >= 0) CalcBB(b1, b2);
+			if (auto b2 = buckets[bi - numRows]; b2 >= 0) CalcBB(b1, b2);
+			if (auto b2 = buckets[bi - numRows + 1]; b2 >= 0) CalcBB(b1, b2);
 		}
 	}
 
-	void PhysSystem::CalcBB(Bucket& b1_, Bucket& b2_) {
+	void PhysSystem::CalcBB(int32_t b1_, int32_t b2_) {
 		// 桶内所有节点两两检测
-		for (int32_t di1 = 0; di1 < b1_.len; ++di1) {
-			for (int32_t di2 = 0; di2 < b2_.len; ++di2) {
-				CalcNN(nodes[b1_.indexAtNodess[di1]], nodes[b2_.indexAtNodess[di2]]);
-			}
-		}
+		// 检测次数限制变量
+		int32_t n1{}, n2{};
+		do {
+			n2 = 0;
+			auto b2 = b2_;
+			do {
+				CalcNN(nodes[b1_], nodes[b2]);
+
+				if (++n2 > 3) break;
+				b2 = nodes[b2].nextNodeIndex;
+			} while (b2 >= 0);
+
+			if (++n1 > 3) break;
+			b1_ = nodes[b1_].nextNodeIndex;
+		} while (b1_ >= 0);
 	}
 
 	void PhysSystem::CalcNN(Node& d1_, Node& d2_) {
