@@ -127,16 +127,10 @@ namespace Test1 {
 	}
 
 	void Scene::FixedUpdate() {
-		// todo: rewrite
-		for (auto i = players.len - 1; i >= 0; --i) {
-			players[i]->Update();
-		}
-		for (auto i = buckets.len - 1; i >= 0; --i) {
-			buckets[i]->Update();
-		}
+		UpdateItems(players);
+		UpdateItems(buckets);
 
 		phys->Step();
-
 
 		if (gg.mouse[GLFW_MOUSE_BUTTON_1] || gg.mouse[GLFW_MOUSE_BUTTON_2] || gg.mouse[GLFW_MOUSE_BUTTON_3]) {
 			auto p = cam.ToLogicPos(gg.mousePos);
@@ -167,8 +161,7 @@ namespace Test1 {
 			}
 		}
 
-		// todo: floor
-		// walls & doors
+		// 背景部分绘制
 		for (auto& o : walls) o->Draw();
 		for (auto& o : doors) o->Draw();
 

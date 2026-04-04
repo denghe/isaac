@@ -127,30 +127,22 @@ namespace Test2 {
 	}
 
 	void Scene::FixedUpdate() {
-		// todo: rewrite
-		for (auto i = players.len - 1; i >= 0; --i) {
-			players[i]->Update();
-		}
-		for (auto i = buckets.len - 1; i >= 0; --i) {
-			buckets[i]->Update();
-		}
+		UpdateItems(players);
+		UpdateItems(buckets);
+		UpdateItems(exploders);
 
 		phys->Step();
 
-
-		if (gg.mouse[GLFW_MOUSE_BUTTON_1] || gg.mouse[GLFW_MOUSE_BUTTON_2] || gg.mouse[GLFW_MOUSE_BUTTON_3]) {
+		if (gg.mouse[GLFW_MOUSE_BUTTON_1] || gg.mouse[GLFW_MOUSE_BUTTON_2]) {
 			auto p = cam.ToLogicPos(gg.mousePos);
 			if (p.x > cCellPixelSize && p.x < mapSize.x - cCellPixelSize
 				&& p.y > cCellPixelSize && p.y < mapSize.y - cCellPixelSize) {
-				size_t count = 1;
-				if (gg.mouse[GLFW_MOUSE_BUTTON_3]) {
-					count = 100;
-				} else if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {
-					count = 10;
-				}
-				for (size_t i = 0; i < count; i++) {
+				if (gg.mouse[GLFW_MOUSE_BUTTON_1]) {
 					auto pos = p + xx::GetRndPosDoughnut(gg.rnd, cItemMaxRadius);
 					buckets.Emplace().Emplace()->Init(this, p);
+				}
+				else if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {
+					// todo: 检测点击位置附近的炸弹桶，引爆它
 				}
 			}
 		}
@@ -160,6 +152,8 @@ namespace Test2 {
 		// bg color
 		//gg.Quad().DrawTinyFrame(gg.embed.shape_dot, 0, 0.5f, gg.windowSize, 0, 1, { 0x81,0xbd,0x57,255 });
 
+		// todo: 地板 render texture ( 血迹, 爆炸痕迹等 )
+
 		for (int i = 0; i < gridBuildings.numRows; ++i) {
 			for (int j = 0; j < gridBuildings.numCols; ++j) {
 				XY p{ j * cCellPixelSize, i * cCellPixelSize };
@@ -167,8 +161,7 @@ namespace Test2 {
 			}
 		}
 
-		// todo: floor
-		// walls & doors
+		// 背景部分绘制
 		for (auto& o : walls) o->Draw();
 		for (auto& o : doors) o->Draw();
 
@@ -176,6 +169,9 @@ namespace Test2 {
 		for (auto& o : players) SortContainerAdd(o.pointer);
 		for (auto& o : buckets) SortContainerAdd(o.pointer);
 		SortContainerDraw();
+
+		// 爆炸特效覆盖在最上层
+		for (auto& o : exploders) o->Draw();
 
 		gg.uiText->SetText(xx::ToString("num items = ", buckets.len));
 		gg.DrawNode(ui);

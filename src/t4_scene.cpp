@@ -76,18 +76,8 @@ namespace Test4 {
 		searchCount = 0;
 		createIgnoreCount = 0;
 
-		for (int i = items.len - 1; i >= 0;) {
-
-			// 帧逻辑. 可能会自杀，可能会删除其他对象
-			items[i]->Update();
-
-			if (i >= items.len) {
-				i = items.len - 1;
-			}
-			else {
-				--i;
-			}
-		}
+		// 倒序更新，允许对象在 Update 中自杀或删除其他对象
+		UpdateItems(items);
 	}
 
 	void Scene::Draw() {

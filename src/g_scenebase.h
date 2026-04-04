@@ -100,6 +100,23 @@ namespace Global {
 		// 绘制 y排序容器 中的对象，绘制完成后清空容器
 		void SortContainerDraw();
 
+		// 倒序更新容器中的对象，允许对象在 Update 中自杀或删除其他对象
+		template<typename Items>
+		XX_INLINE static void UpdateItems(Items& items_) {
+			for (int i = items_.len - 1; i >= 0;) {
+
+				// 帧逻辑. 可能会自杀，可能会删除其他对象
+				items_[i]->Update();
+
+				if (i >= items_.len) {
+					i = items_.len - 1;
+				}
+				else {
+					--i;
+				}
+			}
+		}
+
 	};
 
 }
