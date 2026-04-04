@@ -3,9 +3,9 @@
 
 namespace Test1 {
 
-	PhysSystem::Data& PhysSystem::At(int32_t indexAtNodes_) {
+	PhysSystem::Node& PhysSystem::At(int32_t indexAtNodes_) const {
 		assert(indexAtNodes_ >= 0 && indexAtNodes_ < count);
-		return datas[nodes[indexAtNodes_].indexAtDatas];
+		return (Node&)nodes[indexAtNodes_];
 	}
 
 	void PhysSystem::Init(Scene* scene_, int32_t capacity_) {
@@ -17,108 +17,58 @@ namespace Test1 {
 		numCols = std::ceilf(pixelSize.x / cCellPixelSize);
 
 		bucketsLen = numRows * numCols;
-		capacity = capacity_;
-		freeHead = -1;
-		freeCount = count = 0;
-		if (capacity_) {
-			nodes = std::make_unique_for_overwrite<Node[]>(capacity_);
-			datas = std::make_unique_for_overwrite<Data[]>(capacity_);
-		}
+		nodes.Reserve(capacity_);
 		buckets = std::make_unique_for_overwrite<Bucket[]>(bucketsLen);
-		ClearBuckets();
 	}
 
-	void PhysSystem::Reserve(int32_t capacity_) {
-		assert(buckets && capacity_ > 0);
-		if (capacity_ <= capacity) return;
-		capacity = capacity_;
-
-		auto newNodes = std::make_unique_for_overwrite<Node[]>(capacity_);
-		::memcpy((void*)newNodes.get(), (void*)nodes.get(), count * sizeof(Node));
-		nodes = std::move(newNodes);
-
-		auto newDatas = std::make_unique_for_overwrite<Data[]>(capacity_);
-		::memcpy((void*)newDatas.get(), (void*)datas.get(), datasLen * sizeof(Data));
-		datas = std::move(newDatas);
-	}
-
-	int32_t PhysSystem::Add(SceneItem* ud_) {
+	void PhysSystem::Add(SceneItem* item_) {
 		assert(buckets);
-		auto pos_ = ud_->pos;
-		assert(pos_.y >= 0.f && pos_.y < pixelSize.y);
-		assert(pos_.x >= 0.f && pos_.x < pixelSize.x);
-		auto radius_ = ud_->radius;
-		assert(radius_ > 0.f);
+		assert(item_->indexAtGrid < 0);
+		assert(item_->pos.x >= 0.f && item_->pos.x < pixelSize.x);
+		assert(item_->pos.y >= 0.f && item_->pos.y < pixelSize.y);
+		assert(item_->radius > 0.f);
 
-		int32_t ni;
-		if (freeCount > 0) {
-			ni = freeHead;
-			freeHead = nodes[ni].next;
-			freeCount--;
-		}
-		else {
-			if (count == capacity) {
-				Reserve(count ? count * 2 : 16);
-			}
-			ni = count;
-			count++;
-		}
-
-		auto& n = nodes[ni];
-		n.next = -1;
-		n.indexAtDatas = datasLen;
-		n.ud = ud_;
-
-		auto& d = datas[datasLen++];
-		d.indexAtNodes = ni;
-		d.radius = radius_;
-		d.pos = pos_;
-		d.lastPos = pos_;
-		d.acc = 0;
-
-		return ni;
+		item_->indexAtGrid = nodes.len;
+		auto& node = nodes.Emplace(Node{
+			.pos = item_->pos,
+			.lastPos = item_->pos,
+			.acc = 0,
+			.radius = item_->radius,
+			.item = item_
+		});
 	}
 
-	void PhysSystem::Remove(int32_t& indexAtNodes_) {
+	void PhysSystem::Remove(SceneItem* item_) {
 		assert(buckets);
-		assert(indexAtNodes_ >= 0 && indexAtNodes_ < count);
-		assert(nodes[indexAtNodes_].ud);
-
-		auto& n = nodes[indexAtNodes_];
-		auto& ld = datas[datasLen - 1];
-
-		nodes[ld.indexAtNodes].indexAtDatas = n.indexAtDatas;	// redirect
-		::memcpy((void*)&datas[n.indexAtDatas], (void*)&ld, sizeof(Data));
-		datasLen--;
-
-		n.next = freeHead;
-		n.indexAtDatas = -1;
-		n.ud = {};
-		freeHead = indexAtNodes_;
-		freeCount++;
-
-		indexAtNodes_ = -1;
+		assert(nodes[item_->indexAtGrid].item = item_);
+		auto i = item_->indexAtGrid;
+		nodes.Back().item->indexAtGrid = i;
+		item_->indexAtGrid = -1;
+		nodes.SwapRemoveAt(i);
 	}
 
-	void PhysSystem::ClearBuckets() {
+	void PhysSystem::TryRemove(SceneItem* item_) {
+		if (item_->indexAtGrid >= 0) {
+			Remove(item_);
+		}
+	}
+
+	void PhysSystem::Fill() {
 		assert(buckets);
 		for (int32_t i = 0; i < bucketsLen; ++i) {
 			buckets[i].len = 0;
 		}
-	}
-
-	void PhysSystem::FillBuckets() {
-		for (int32_t di = 0; di < datasLen; ++di) {
-			auto p = (datas[di].pos * _1_cellSize).As<int32_t>();
+		for (int32_t len = nodes.len, i = 0; i < len; ++i) {
+			auto p = (nodes[i].pos * _1_cellSize).As<int32_t>();
 			assert(p.x >= 0 && p.x < numCols && p.y >= 0 && p.y < numRows);
 			auto& b = buckets[p.x * numRows + p.y];
-			if (b.len < b.indexAtDatass.size()) {	// ignore
-				b.indexAtDatass[b.len++] = di;
+			if (b.len < b.indexAtNodess.size()) {
+				b.indexAtNodess[b.len++] = i;
 			}
 		}
 	}
 
-	void PhysSystem::CalcDatas() {
+	void PhysSystem::Calc() {
 		for (int32_t bi = 0; bi < bucketsLen; ++bi) {
 			auto& b = buckets[bi];
 			if (!b.len) continue;
@@ -137,12 +87,12 @@ namespace Test1 {
 	void PhysSystem::CalcBB(Bucket& b1_, Bucket& b2_) {
 		for (int32_t di1 = 0; di1 < b1_.len; ++di1) {
 			for (int32_t di2 = 0; di2 < b2_.len; ++di2) {
-				CalcDD(datas[b1_.indexAtDatass[di1]], datas[b2_.indexAtDatass[di2]]);
+				CalcNN(nodes[b1_.indexAtNodess[di1]], nodes[b2_.indexAtNodess[di2]]);
 			}
 		}
 	}
 
-	void PhysSystem::CalcDD(Data& d1_, Data& d2_) {
+	void PhysSystem::CalcNN(Node& d1_, Node& d2_) {
 		auto d = d1_.pos - d2_.pos;
 		auto mag2 = d.x * d.x + d.y * d.y;
 		auto r = d1_.radius + d2_.radius;
@@ -167,10 +117,9 @@ namespace Test1 {
 		d2_.pos -= spd;
 	}
 
-	void PhysSystem::UpdateDatas() {
-		for (int32_t i = 0; i < datasLen; ++i) {
-			auto& o = datas[i];
-			auto ud = nodes[o.indexAtNodes].ud;
+	void PhysSystem::Writeback() {
+		for (int32_t i = 0, len = nodes.len; i < len; ++i) {
+			auto& o = nodes[i];
 			o.acc += cGravity;
 
 #if 0
@@ -191,7 +140,7 @@ namespace Test1 {
 
 			auto spd = o.pos - o.lastPos;
 			auto vd = cVelocityDamping;
-			if (ud->typeId == Player::cTypeId) {
+			if (o.item->typeId == Player::cTypeId) {
 				vd = cVelocityDamping * 3.f;
 			}
 
@@ -232,18 +181,17 @@ namespace Test1 {
 				});
 
 			// write back
-			if (ud->pos != o.pos) {
-				ud->pos = o.pos;
-				ud->y = o.pos.y;
+			if (o.item->pos != o.pos) {
+				o.item->pos = o.pos;
+				o.item->y = o.pos.y;
 			}
 		}
 	}
 
-	void PhysSystem::Update() {
-		ClearBuckets();
-		FillBuckets();
-		CalcDatas();
-		UpdateDatas();
+	void PhysSystem::Step() {
+		Fill();
+		Calc();
+		Writeback();
 	}
 
 }

@@ -135,7 +135,7 @@ namespace Test1 {
 			buckets[i]->Update();
 		}
 
-		phys->Update();
+		phys->Step();
 
 
 		if (gg.mouse[GLFW_MOUSE_BUTTON_1] || gg.mouse[GLFW_MOUSE_BUTTON_2] || gg.mouse[GLFW_MOUSE_BUTTON_3]) {

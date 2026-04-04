@@ -15,7 +15,7 @@ namespace Test1 {
 		indexAtContainer = scene->players.len - 1;
 		assert(scene->players[indexAtContainer].pointer == this);
 
-		indexAtGrid = scene->phys->Add(this);
+		scene->phys->Add(this);
 	}
 
 	void Player::Update() {
@@ -131,9 +131,7 @@ namespace Test1 {
 		disposing = true;
 
 		// 进一步释放资源
-		if (indexAtGrid > -1) {
-			scene->phys->Remove(indexAtGrid);
-		}
+		scene->phys->Remove(this);
 
 		// 从容器中移除对象( 释放内存 )
 		auto i = indexAtContainer;

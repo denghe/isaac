@@ -17,49 +17,39 @@ namespace Test1 {
 		static constexpr float cMargin{ cCellPixelSize };
 
 		struct Node {
-			int32_t next;
-			int32_t indexAtDatas;
-			SceneItem* ud;
-		};
-
-		struct Data {
-			int32_t indexAtNodes;
-			float radius{};
 			XY pos, lastPos, acc;
+			float radius{};
+			SceneItem* item{};
 		};
 
 		struct Bucket {
 			int32_t len;
-			std::array<int32_t, 3> indexAtDatass;	// 3 maybe need larger
+			std::array<int32_t, 3> indexAtNodess;	// 3 maybe need larger
 		};
 
 		Scene* scene{};
-
-		int32_t numRows{}, numCols{}, bucketsLen{};					// for buckets
-		int32_t freeHead{ -1 }, freeCount{}, count{}, capacity{};	// for nodes
-		int32_t datasLen{};											// for datas
-
+		int32_t numRows{}, numCols{}, bucketsLen{};
 		XY pixelSize{};
 
-		std::unique_ptr<Node[]> nodes;
-		std::unique_ptr<Data[]> datas;
+		xx::List<Node> nodes;
 		std::unique_ptr<Bucket[]> buckets;
 
-		Data& At(int32_t indexAtNodes_);
+		Node& At(int32_t indexAtNodes_) const;
 
 		void Init(Scene* scene_, int32_t capacity_ = 0);
 		void Reserve(int32_t capacity_);
-		int32_t Add(SceneItem* ud_);	// return indexAtNodes
-		void Remove(int32_t& indexAtNodes_);
+		void Add(SceneItem* item_);
+		void Remove(SceneItem* item_);
+		void TryRemove(SceneItem* item_);
 
 		void ClearBuckets();
-		void FillBuckets();
-		void CalcDatas();
+		void Fill();
+		void Calc();
 		void CalcBB(Bucket& b1_, Bucket& b2_);
-		void CalcDD(Data& d1_, Data& d2_);
-		void UpdateDatas();
+		void CalcNN(Node& n1_, Node& n2_);
+		void Writeback();
 
-		void Update();
+		void Step();
 	};
 
 }
