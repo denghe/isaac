@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
-#include "t3_sceneitem_bucket.h"
-#include "t3_sceneitem_exploder.h"
+#include "t3_.h"
 
 namespace Test3 {
 
@@ -20,15 +19,24 @@ namespace Test3 {
 	void Exploder::Update() {
 		XX_BEGIN(_1);
 		numSteps = (int32_t)std::ceilf(cExplodeDuration * gg.cFps);
-		{
-			auto targetScale = cExplodeRadius * 2.f / gg.pics.cell_bucket.uvRect.w;
-			assert(targetScale > scale);
-			inc = (targetScale - scale) / numSteps;
-		}
+		inc = (cExplodeRadius - radius) / numSteps;
 		for (; numSteps > 0; --numSteps) {
-			// todo: 爆炸检测
+			// 爆炸检测，级联引爆
+			auto cri = scene->phys->PosToCRIndex(pos);
+			scene->phys->ForeachByRange(cri.y, cri.x, radius + 64.f, gg.sgrdd, [&](PhysSystem::Node& o, float range)->void {
+				if (o.value->typeId == Bucket::cTypeId) {
+					auto d = o.cache.pos - pos;
+					auto mag2 = d.x * d.x + d.y * d.y;
+					auto r = o.cache.radius + radius;
+					auto rr = r * r;
+					if (mag2 < rr) {
+						((Bucket*)o.value)->Explode();
+					}
+				}
+			});
 			XX_YIELD(_1);
-			scale += inc;
+			radius += inc;
+			scale = radius * 2.f / gg.pics.cell_bucket.uvRect.w;
 		}
 		numSteps = (int32_t)std::ceilf(cFadeoutDuration * gg.cFps);
 		inc = 1.f / numSteps;
@@ -41,8 +49,9 @@ namespace Test3 {
 	}
 
 	void Exploder::Draw() {
+		auto c = (uint8_t)(255 * alpha);
 		gg.Quad().DrawFrame(gg.pics.cell_bucket, scene->cam.ToGLPos(pos)
-			, scale * scene->cam.scale, radians, 1, {255,255,255, (uint8_t)(255*alpha)});
+			, scale * scene->cam.scale, radians, 1, {c,c,c,c});
 	}
 
 	void Exploder::Dispose() {
