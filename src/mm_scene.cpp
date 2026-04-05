@@ -2,7 +2,7 @@
 #include "mm_scene.h"
 #include "t1_.h"
 #include "t2_.h"
-#include "t3_scene.h"
+#include "t3_.h"
 #include "t4_scene.h"
 
 namespace MainMenu {
@@ -34,7 +34,7 @@ namespace MainMenu {
 			gg.MakeScene<Test2::Scene>()->Init();
 		};
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"test3")).SetLabelBorder().onClicked = [this] {
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"密集投放炸弹桶v2")).SetLabelBorder().onClicked = [this] {
 			gg.MakeScene<Test3::Scene>()->Init();
 		};
 
