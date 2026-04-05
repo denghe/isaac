@@ -113,6 +113,7 @@ namespace Test1 {
 		XY v;
 		// 如果两个圆心几乎重叠，随机一个方向弹开( 使用最大速度 )
 		if (mag2 <= 0.0001f) {
+			if (&d1_ == &d2_) return;	// 相同节点, 不处理
 			auto radians = gg.rnd.Next<float>(-M_PI, M_PI);
 			XY cossin{ std::cosf(radians), std::sinf(radians) };
 			v = cossin * cMaxSpeed;

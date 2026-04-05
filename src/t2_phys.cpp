@@ -60,7 +60,7 @@ namespace Test2 {
 	void PhysSystem::FillBuckets() {
 		assert(buckets);
 		// 清空桶
-		memset(buckets.get(), 255, bucketsLen * sizeof(int32_t));
+		memset(buckets.get(), -1, bucketsLen * sizeof(int32_t));
 		// 把节点下标放入桶: 根据节点位置计算桶索引
 		for (int32_t len = nodes.len, i = 0; i < len; ++i) {
 			auto p = (nodes[i].pos * _1_cellSize).As<int32_t>();
@@ -90,7 +90,7 @@ namespace Test2 {
 	}
 
 	void PhysSystem::CalcBB(int32_t b1_, int32_t b2_) {
-		// 桶内所有节点两两检测
+		// 两个桶内所有节点两两检测
 		// 检测次数限制变量
 		int32_t n1{}, n2{};
 		do {
@@ -120,6 +120,7 @@ namespace Test2 {
 		XY v;
 		// 如果两个圆心几乎重叠，随机一个方向弹开( 使用最大速度 )
 		if (mag2 <= 0.0001f) {
+			if (&d1_ == &d2_) return;	// 相同节点, 不处理
 			auto radians = gg.rnd.Next<float>(-M_PI, M_PI);
 			XY cossin{ std::cosf(radians), std::sinf(radians) };
 			v = cossin * cMaxSpeed;
