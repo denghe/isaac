@@ -7,6 +7,7 @@ namespace Test3 {
 	struct Wall;
 	struct Door;
 	struct Bucket;
+	struct Exploder;
 	struct Player;
 	struct PhysSystem;
 
@@ -28,6 +29,7 @@ namespace Test3 {
 		xx::List<xx::Shared<Door>> doors;
 		xx::List<xx::Shared<Bucket>> buckets;
 		xx::List<xx::Shared<Player>> players;
+		xx::List<xx::Shared<Exploder>> exploders;
 
 		void GenWallHorizontal(int32_t xFrom_, int32_t xTo_, int32_t y_, bool leftOverflow_ = false, bool rightOverflow_ = false);
 		void GenWallVertical(int32_t x_, int32_t yFrom_, int32_t yTo_, bool topOverflow_ = false, bool bottomOverflow_ = false);

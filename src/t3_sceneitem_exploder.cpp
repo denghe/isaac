@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
-#include "t2_sceneitem_bucket.h"
-#include "t2_sceneitem_exploder.h"
+#include "t3_sceneitem_bucket.h"
+#include "t3_sceneitem_exploder.h"
 
-namespace Test2 {
+namespace Test3 {
 
 	void Exploder::Init(Bucket* bucket_) {
 		typeId = cTypeId;
@@ -13,7 +13,8 @@ namespace Test2 {
 		scale = bucket_->scale;
 		radians = bucket_->radians;
 
-		indexAtContainer = scene->exploders.len;
+		indexAtContainer = scene->exploders.len - 1;
+		assert(scene->exploders[indexAtContainer].pointer == this);
 	}
 
 	void Exploder::Update() {
@@ -46,8 +47,19 @@ namespace Test2 {
 
 	void Exploder::Dispose() {
 		assert(scene);
+		assert(!disposing);
+		assert(indexAtContainer != -1);
+		auto& container = scene->exploders;
+		assert(container[indexAtContainer].pointer == this);
+
+		// 设置标记
+		disposing = true;
+
 		// 从容器中移除对象( 释放内存 )
-		scene->exploders.SwapRemoveAt(indexAtContainer);
+		auto i = indexAtContainer;
+		container.Back()->indexAtContainer = i;
+		indexAtContainer = -1;
+		container.SwapRemoveAt(i);
 	}
 
 }

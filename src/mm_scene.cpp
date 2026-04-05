@@ -26,15 +26,15 @@ namespace MainMenu {
 		L.Append(C->Make<xx::Label>()->Init(2, 0, 0, fontSize * 3)(U"以撒模拟")).SetBorder();
 		L.EndLine();
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"密集投放炸弹桶")).SetLabelBorder().onClicked = [this] {
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"密集投放炸弹桶v1")).SetLabelBorder().onClicked = [this] {
 			gg.MakeScene<Test1::Scene>()->Init();
 		};
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"连环引爆炸弹桶")).SetLabelBorder().onClicked = [this] {
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"密集投放炸弹桶v2")).SetLabelBorder().onClicked = [this] {
 			gg.MakeScene<Test2::Scene>()->Init();
 		};
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"密集投放炸弹桶v2")).SetLabelBorder().onClicked = [this] {
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"连环引爆炸弹桶")).SetLabelBorder().onClicked = [this] {
 			gg.MakeScene<Test3::Scene>()->Init();
 		};
 

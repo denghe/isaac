@@ -19,7 +19,7 @@ namespace Test2 {
 	}
 
 	void Bucket::Update() {
-		// todo: 延迟爆炸逻辑( 如果受伤 )
+		// todo: logic
 	}
 
 	void Bucket::Draw() {
@@ -47,8 +47,4 @@ namespace Test2 {
 		container.SwapRemoveAt(i);
 	}
 
-	void Bucket::Explode() {
-		scene->exploders.Emplace().Emplace()->Init(this);
-		Dispose();
-	}
 }

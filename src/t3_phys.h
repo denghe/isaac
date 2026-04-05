@@ -56,6 +56,12 @@ namespace Test3 {
 		void CalcBB(int32_t b1_, int32_t b2_);
 		void CalcNN(PhysCache& d1_, PhysCache& d2_);
 		void Writeback();
+
+		// todo: 增加一些 PhysCache 的辅助修改函数，替代 At() 返回的 Node& 直接修改 cache 的方式
+
+		// todo: 当 nodes 里面夹杂的未使用节点过多时，可能会导致性能问题。
+		// 可以考虑定期清理未使用节点( 可以将它们移动到数组末尾，并更新 freeHead 和 freeCount )
+		// 触发条件可以是 freeCount 超过某个阈值，或者每隔一定时间清理一次。
 	};
 
 }

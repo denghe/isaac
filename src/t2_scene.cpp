@@ -129,20 +129,30 @@ namespace Test2 {
 	void Scene::FixedUpdate() {
 		UpdateItems(players);
 		UpdateItems(buckets);
-		UpdateItems(exploders);
 
 		phys->Step();
 
-		if (gg.mouse[GLFW_MOUSE_BUTTON_1] || gg.mouse[GLFW_MOUSE_BUTTON_2]) {
+		if (gg.mouse[GLFW_MOUSE_BUTTON_1]
+			|| gg.mouse[GLFW_MOUSE_BUTTON_2]
+			|| gg.mouse[GLFW_MOUSE_BUTTON_3]
+			|| gg.mouse[GLFW_MOUSE_BUTTON_4]
+			) {
 			auto p = cam.ToLogicPos(gg.mousePos);
 			if (p.x > cCellPixelSize && p.x < mapSize.x - cCellPixelSize
 				&& p.y > cCellPixelSize && p.y < mapSize.y - cCellPixelSize) {
-				if (gg.mouse[GLFW_MOUSE_BUTTON_1]) {
+				size_t count = 0;
+				if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {
+					count = 1;
+				}
+				else if (gg.mouse[GLFW_MOUSE_BUTTON_3]) {
+					count = 10;
+				}
+				else if (gg.mouse[GLFW_MOUSE_BUTTON_4]) {
+					count = 100;
+				}
+				for (size_t i = 0; i < count; i++) {
 					auto pos = p + xx::GetRndPosDoughnut(gg.rnd, cItemMaxRadius);
 					buckets.Emplace().Emplace()->Init(this, p);
-				}
-				else if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {
-					// todo: 检测点击位置附近的炸弹桶，引爆它
 				}
 			}
 		}
@@ -169,9 +179,6 @@ namespace Test2 {
 		for (auto& o : players) SortContainerAdd(o.pointer);
 		for (auto& o : buckets) SortContainerAdd(o.pointer);
 		SortContainerDraw();
-
-		// 爆炸特效覆盖在最上层
-		for (auto& o : exploders) o->Draw();
 
 		gg.uiText->SetText(xx::ToString("num items = ", buckets.len));
 		gg.DrawNode(ui);

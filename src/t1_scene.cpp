@@ -132,15 +132,23 @@ namespace Test1 {
 
 		phys->Step();
 
-		if (gg.mouse[GLFW_MOUSE_BUTTON_1] || gg.mouse[GLFW_MOUSE_BUTTON_2] || gg.mouse[GLFW_MOUSE_BUTTON_3]) {
+		if (gg.mouse[GLFW_MOUSE_BUTTON_1]
+			|| gg.mouse[GLFW_MOUSE_BUTTON_2]
+			|| gg.mouse[GLFW_MOUSE_BUTTON_3]
+			|| gg.mouse[GLFW_MOUSE_BUTTON_4]
+			) {
 			auto p = cam.ToLogicPos(gg.mousePos);
 			if (p.x > cCellPixelSize && p.x < mapSize.x - cCellPixelSize
 				&& p.y > cCellPixelSize && p.y < mapSize.y - cCellPixelSize) {
-				size_t count = 1;
-				if (gg.mouse[GLFW_MOUSE_BUTTON_3]) {
-					count = 100;
-				} else if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {
+				size_t count = 0;
+				if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {
+					count = 1;
+				}
+				else if (gg.mouse[GLFW_MOUSE_BUTTON_3]) {
 					count = 10;
+				}
+				else if (gg.mouse[GLFW_MOUSE_BUTTON_4]) {
+					count = 100;
 				}
 				for (size_t i = 0; i < count; i++) {
 					auto pos = p + xx::GetRndPosDoughnut(gg.rnd, cItemMaxRadius);
@@ -154,10 +162,12 @@ namespace Test1 {
 		// bg color
 		//gg.Quad().DrawTinyFrame(gg.embed.shape_dot, 0, 0.5f, gg.windowSize, 0, 1, { 0x81,0xbd,0x57,255 });
 
+		// todo: 地板 render texture ( 血迹, 爆炸痕迹等 )
+
 		for (int i = 0; i < gridBuildings.numRows; ++i) {
 			for (int j = 0; j < gridBuildings.numCols; ++j) {
 				XY p{ j * cCellPixelSize, i * cCellPixelSize };
-				gg.Quad().DrawTinyFrame(gg.pics.cell_floor, cam.ToGLPos(p), {0,1}, cam.scale, 0);
+				gg.Quad().DrawTinyFrame(gg.pics.cell_floor, cam.ToGLPos(p), { 0,1 }, cam.scale, 0);
 			}
 		}
 

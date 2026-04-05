@@ -129,22 +129,48 @@ namespace Test3 {
 	void Scene::FixedUpdate() {
 		UpdateItems(players);
 		UpdateItems(buckets);
+		UpdateItems(exploders);
 
 		phys->Step();
 
-		if (gg.mouse[GLFW_MOUSE_BUTTON_1] || gg.mouse[GLFW_MOUSE_BUTTON_2] || gg.mouse[GLFW_MOUSE_BUTTON_3]) {
+		if (gg.mouse[GLFW_MOUSE_BUTTON_1]
+			|| gg.mouse[GLFW_MOUSE_BUTTON_2]
+			|| gg.mouse[GLFW_MOUSE_BUTTON_3]
+			|| gg.mouse[GLFW_MOUSE_BUTTON_4]
+			) {
 			auto p = cam.ToLogicPos(gg.mousePos);
 			if (p.x > cCellPixelSize && p.x < mapSize.x - cCellPixelSize
 				&& p.y > cCellPixelSize && p.y < mapSize.y - cCellPixelSize) {
-				size_t count = 1;
-				if (gg.mouse[GLFW_MOUSE_BUTTON_3]) {
-					count = 100;
-				} else if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {
+
+				size_t count = 0;
+				if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {
+					count = 1;
+				}
+				else if (gg.mouse[GLFW_MOUSE_BUTTON_3]) {
 					count = 10;
+				}
+				else if (gg.mouse[GLFW_MOUSE_BUTTON_4]) {
+					count = 100;
 				}
 				for (size_t i = 0; i < count; i++) {
 					auto pos = p + xx::GetRndPosDoughnut(gg.rnd, cItemMaxRadius);
 					buckets.Emplace().Emplace()->Init(this, p);
+				}
+
+				if (gg.mouse[GLFW_MOUSE_BUTTON_1]) {
+					// 查找鼠标位置的 bucket，爆炸它
+					auto cri = phys->PosToCRIndex(p);
+					phys->ForeachBy9(cri.y, cri.x, [&](PhysSystem::Node& o, float range)->void {
+						if (o.value->typeId == Bucket::cTypeId) {
+							auto d = o.cache.pos - p;
+							auto mag2 = d.x * d.x + d.y * d.y;
+							auto r = o.cache.radius + 10.f;	// + 10.f 鼠标范围
+							auto rr = r * r;
+							if (mag2 < rr) {
+								((Bucket*)o.value)->Explode();
+							}
+						}
+					});
 				}
 			}
 		}
@@ -153,6 +179,8 @@ namespace Test3 {
 	void Scene::Draw() {
 		// bg color
 		//gg.Quad().DrawTinyFrame(gg.embed.shape_dot, 0, 0.5f, gg.windowSize, 0, 1, { 0x81,0xbd,0x57,255 });
+
+		// todo: 地板 render texture ( 血迹, 爆炸痕迹等 )
 
 		for (int i = 0; i < gridBuildings.numRows; ++i) {
 			for (int j = 0; j < gridBuildings.numCols; ++j) {
@@ -169,6 +197,9 @@ namespace Test3 {
 		for (auto& o : players) SortContainerAdd(o.pointer);
 		for (auto& o : buckets) SortContainerAdd(o.pointer);
 		SortContainerDraw();
+
+		// 爆炸特效覆盖在最上层
+		for (auto& o : exploders) o->Draw();
 
 		gg.uiText->SetText(xx::ToString("num items = ", buckets.len));
 		gg.DrawNode(ui);

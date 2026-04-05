@@ -6,3 +6,4 @@
 #include "t3_sceneitem_door.h"
 #include "t3_sceneitem_player.h"
 #include "t3_sceneitem_wall.h"
+#include "t3_sceneitem_exploder.h"
