@@ -113,7 +113,7 @@ namespace Test4 {
 	void Bullet1::OnDispose() {
 		// 从 grid 中移除对象，避免被查询到
 		if (indexAtGrid != -1) {
-			assert(scene->itemsGrid32.ValueAt(indexAtGrid) == this);
+			assert(scene->itemsGrid32.NodeAt(indexAtGrid).value == this);
 			scene->itemsGrid32.Remove(indexAtGrid, this);
 		}
 	}

@@ -43,7 +43,7 @@ namespace Test4 {
 	void Monster::OnDispose() {
 		// 从 grid 中移除对象，避免被查询到
 		if (indexAtGrid != -1) {
-			assert(scene->itemsGrid64.ValueAt(indexAtGrid) == this);
+			assert(scene->itemsGrid64.NodeAt(indexAtGrid).value == this);
 			scene->itemsGrid64.Remove(indexAtGrid, this);
 		}
 	}

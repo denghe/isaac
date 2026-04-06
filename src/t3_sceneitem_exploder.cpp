@@ -25,23 +25,25 @@ namespace Test3 {
 		// 开始执行体积增大循环逻辑
 		for (; numSteps > 0; --numSteps) {
 			// 爆炸检测，级联引爆
-			auto cri = scene->phys->PosToCRIndex(pos);
-			scene->phys->ForeachByRange(cri.y, cri.x, radius + 64.f, gg.sgrdd
-				, [&](PhysSystem::Node& o, float range)->void {
-				// 过滤目标类型：炸药桶
-				if (o.value->typeId == Bucket::cTypeId) {
-					// 圆心距离判断
-					auto d = o.cache.pos - pos;
-					auto mag2 = d.x * d.x + d.y * d.y;
-					auto r = o.cache.radius + radius;
-					auto rr = r * r;
-					// 相交
-					if (mag2 < rr) {
-						// 令桶爆炸
-						((Bucket*)o.value)->Explode();
+			{
+				auto cri = scene->phys->PosToCRIndex(pos);
+				scene->phys->ForeachByRange(cri.y, cri.x, radius + 64.f, gg.sgrdd
+					, [&](PhysSystem::Node& o, float range)->void {
+					// 过滤目标类型：炸药桶
+					if (o.value->typeId == Bucket::cTypeId) {
+						// 圆心距离判断
+						auto d = o.cache.pos - pos;
+						auto mag2 = d.x * d.x + d.y * d.y;
+						auto r = o.cache.radius + radius;
+						auto rr = r * r;
+						// 相交
+						if (mag2 < rr) {
+							// 令桶爆炸
+							((Bucket*)o.value)->Explode();
+						}
 					}
-				}
-			});
+				});
+			}
 			XX_YIELD(_1);
 			// 体积逐渐变大
 			radius += inc;

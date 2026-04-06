@@ -36,7 +36,7 @@ namespace Test1 {
 		void GenPlayer(int32_t x_, int32_t y_);
 		void GenBucket(int32_t x_, int32_t y_);
 
-		void Init();
+		void Init() override;
 		void Update() override;
 		void FixedUpdate() override;
 		void Draw() override;
