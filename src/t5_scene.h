@@ -35,7 +35,7 @@ namespace Test5 {
 		xx::List<xx::Shared<Wall>> walls;
 		xx::List<xx::Shared<Door>> doors;
 		xx::List<xx::Shared<Bucket>> buckets;
-		xx::List<xx::Shared<Player>> players;
+		xx::Shared<Player> player;
 		xx::List<xx::Shared<Exploder>> exploders;
 
 		xx::FrameBuffer floorMaskFB;

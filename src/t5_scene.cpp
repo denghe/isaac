@@ -75,6 +75,8 @@ namespace Test5 {
 			return;
 		}
 
+		// todo: 鼠标滚轮缩放 camera
+
 		// fixed update
 		auto d = float(std::min((float)gg.delta, gg.cMaxDelta) * timeScale);
 		timePool += d;
@@ -86,7 +88,7 @@ namespace Test5 {
 	}
 
 	void Scene::FixedUpdate() {
-		UpdateItems(players);
+		player->Update();
 		UpdateItems(buckets);
 		UpdateItems(exploders);
 
@@ -139,7 +141,31 @@ namespace Test5 {
 		// bg color
 		//gg.Quad().DrawTinyFrame(gg.embed.shape_dot, 0, 0.5f, gg.windowSize, 0, 1, { 0x81,0xbd,0x57,255 });
 
-		// todo: 大地图镜头控制
+		// 大地图镜头控制: 如果已经接近地图边缘，则不继续修改 original 而是让角色往边缘移动
+		xx::FromTo<XY> originalRange{};
+		// 先算 camera 的 original 值范围. 如果地图比屏幕尺寸大，则范围为差值, 否则将地图居中
+		auto ws = gg.windowSize / cam.scale;
+		if (mapSize.x > ws.x) {
+			originalRange.from.x = mapSize.x * 0.5f - (mapSize.x - ws.x) * 0.5f;
+			originalRange.to.x = mapSize.x * 0.5f + (mapSize.x - ws.x) * 0.5f;
+		}
+		else {
+			originalRange.from.x = originalRange.to.x = mapSize.x * 0.5f;
+		}
+		if (mapSize.y > ws.y) {
+			originalRange.from.y = mapSize.y * 0.5f - (mapSize.y - ws.y) * 0.5f;
+			originalRange.to.y = mapSize.y * 0.5f + (mapSize.y - ws.y) * 0.5f;
+		}
+		else {
+			originalRange.from.y = originalRange.to.y = mapSize.y * 0.5f;
+		}
+		// 用值范围限制 original 值
+		auto original = player->pos;
+		if (original.x < originalRange.from.x) original.x = originalRange.from.x;
+		else if (original.x > originalRange.to.x) original.x = originalRange.to.x;
+		if (original.y < originalRange.from.y) original.y = originalRange.from.y;
+		else if (original.y > originalRange.to.y) original.y = originalRange.to.y;
+		cam.SetOriginal(original);
 
 		// 绘制地板纹理
 		for (int32_t i = 0; i < gridBuildings.numRows; ++i) {
@@ -157,19 +183,24 @@ namespace Test5 {
 		if (floorMasks.len) {
 			// 将数据里的东西画到 render texture 上并清空
 			floorMaskFB.DrawTo(floorMaskTex, {}, [this] {
+				// 这里的绘制坐标不受 cam 影响, 直接映射到逻辑地图. 以贴图左上角为 0,0 开始绘制
+				auto leftTopPos = mapSize * XY{ -0.5f, 0.5f };
 				for (auto& o : floorMasks) {
-					gg.Quad().DrawFrame(o.frame, cam.ToGLPos(o.pos), cam.scale * o.scale, o.radians, o.colorplus, o.color);
+					auto p = leftTopPos + o.pos.FlipY();
+					gg.Quad().DrawFrame(o.frame, p, o.scale, o.radians, o.colorplus, o.color);
 				}
 			});
 			floorMasks.Clear();
 		}
-		gg.Quad().Draw(*floorMaskTex, *floorMaskTex, {});
+		gg.Quad().Draw(*floorMaskTex, *floorMaskTex, cam.ToGLPos(mapSize * 0.5f), 0.5f, cam.scale);
+		// todo: 换 quad ex 并按屏幕实际尺寸裁切uv 以节省填充率?
 
 		// sort order by y
-		for (auto& o : players) SortContainerAdd(o.pointer);
+		SortContainerAdd(player.pointer);
 		for (auto& o : buckets) SortContainerAdd(o.pointer);
 		SortContainerDraw();
 
+		// todo: 光照层 ?
 		// 爆炸特效覆盖在最上层
 		for (auto& o : exploders) o->Draw();
 

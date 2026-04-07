@@ -12,9 +12,6 @@ namespace Test5 {
 		scale = radius * 2.f / gg.pics.cell_player.uvRect.w;
 		radians = {};
 
-		indexAtContainer = scene->players.len - 1;
-		assert(scene->players[indexAtContainer].pointer == this);
-
 		scene->phys->Add(this);
 	}
 
@@ -125,8 +122,6 @@ namespace Test5 {
 		assert(scene);
 		assert(!disposing);
 		assert(indexAtContainer != -1);
-		auto& container = scene->players;
-		assert(container[indexAtContainer].pointer == this);
 
 		// 设置标记
 		disposing = true;
@@ -135,10 +130,7 @@ namespace Test5 {
 		scene->phys->Remove(this);
 
 		// 从容器中移除对象( 释放内存 )
-		auto i = indexAtContainer;
-		container.Back()->indexAtContainer = i;
-		indexAtContainer = -1;
-		container.SwapRemoveAt(i);
+		scene->player.Reset();
 	}
 
 }

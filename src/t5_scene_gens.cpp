@@ -50,7 +50,7 @@ namespace Test5 {
 
 	void Scene::GenPlayer(int32_t x_, int32_t y_) {
 		auto p = XY{ x_, y_ } * cCellPixelSize + cCellPixelHalfSize;
-		players.Emplace().Emplace()->Init(this, p);
+		player.Emplace()->Init(this, p);
 	}
 
 	void Scene::GenBucket(int32_t x_, int32_t y_) {
