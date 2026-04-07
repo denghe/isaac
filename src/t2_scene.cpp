@@ -66,7 +66,6 @@ namespace Test2 {
 		cam.Init(gg.scale, gg.designSize.y / mapSize.y, mapSize / 2);
 		sortContainer.Resize<true>((int32_t)cRoomMaxPixelSize.y);
 		gridBuildings.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize), std::ceilf(mapSize.x / cCellPixelSize));
-		//gridItems.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize), std::ceilf(mapSize.x / cCellPixelSize));
 		phys.Emplace()->Init(this);
 
 		// [][][][][][][]  [][][][][][][]

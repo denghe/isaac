@@ -1,115 +1,71 @@
 ﻿#include "pch.h"
-#include "t3_.h"
+#include "t5_.h"
 #include "mm_scene.h"
 
-namespace Test3 {
-
-	void Scene::GenWallHorizontal(int32_t xFrom_, int32_t xTo_, int32_t y_, bool leftOverflow_, bool rightOverflow_) {
-		for (int32_t x = xFrom_; x <= xTo_; ++x) {
-			walls.Emplace().Emplace()->Init(this, XY{ x, y_ } * cCellPixelSize + cCellPixelHalfSize);
-		}
-		for (int32_t x = xFrom_; x < xTo_; ++x) {
-			walls.Emplace().Emplace()->Init(this, XY{ x, y_ } * cCellPixelSize + XY{ cCellPixelSize, cCellPixelHalfSize });
-		}
-		if (leftOverflow_) {
-			walls.Emplace().Emplace()->Init(this, XY{ xFrom_, y_ } * cCellPixelSize + XY{ 0, cCellPixelHalfSize });
-		}
-		if (rightOverflow_) {
-			walls.Emplace().Emplace()->Init(this, XY{ xTo_, y_ } * cCellPixelSize + XY{ cCellPixelSize, cCellPixelHalfSize });
-		}
-	}
-
-	void Scene::GenWallVertical(int32_t x_, int32_t yFrom_, int32_t yTo_, bool topOverflow_, bool bottomOverflow_) {
-		for (int32_t y = yFrom_; y <= yTo_; ++y) {
-			walls.Emplace().Emplace()->Init(this, XY{ x_, y } * cCellPixelSize + cCellPixelHalfSize);
-		}
-		for (int32_t y = yFrom_; y < yTo_; ++y) {
-			walls.Emplace().Emplace()->Init(this, XY{ x_, y } * cCellPixelSize + XY{ cCellPixelHalfSize, cCellPixelSize });
-		}
-		if (topOverflow_) {
-			walls.Emplace().Emplace()->Init(this, XY{ x_, yFrom_ } * cCellPixelSize + XY{ cCellPixelHalfSize, 0 });
-		}
-		if (bottomOverflow_) {
-			walls.Emplace().Emplace()->Init(this, XY{ x_, yTo_ } * cCellPixelSize + XY{ cCellPixelHalfSize, cCellPixelSize });
-		}
-	}
-
-	void Scene::GenDoorHorizontal(int32_t x_, int32_t y_) {
-		auto p = XY{ x_, y_ } * cCellPixelSize + cCellPixelHalfSize;
-		doors.Emplace().Emplace()->Init(this, p + XY{ cCellPixelHalfSize, 0 }, false);
-		doors.Emplace().Emplace()->Init(this, p + XY{ -cCellPixelHalfSize, 0 }, false);
-		doors.Emplace().Emplace()->Init(this, p, true);
-	}
-
-	void Scene::GenDoorVertical(int32_t x_, int32_t y_) {
-		auto p = XY{ x_, y_ } * cCellPixelSize + cCellPixelHalfSize;
-		doors.Emplace().Emplace()->Init(this, p + XY{ 0, cCellPixelHalfSize }, false);
-		doors.Emplace().Emplace()->Init(this, p + XY{ 0, -cCellPixelHalfSize }, false);
-		doors.Emplace().Emplace()->Init(this, p, true);
-	}
-
-	void Scene::GenPlayer(int32_t x_, int32_t y_) {
-		auto p = XY{ x_, y_ } * cCellPixelSize + cCellPixelHalfSize;
-		players.Emplace().Emplace()->Init(this, p);
-	}
-
-	void Scene::GenBucket(int32_t x_, int32_t y_) {
-		auto p = XY{ x_, y_ } * cCellPixelSize + cCellPixelHalfSize;
-		buckets.Emplace().Emplace()->Init(this, p);
-	}
+namespace Test5 {
 
 	void Scene::Init() {
 		ui.Emplace()->InitRoot(gg.scale * cUIScale);
 		cursor.Emplace()->Init();
 
-		mapSize = cRoom1x1PixelSize;
-		cam.Init(gg.scale, gg.designSize.y / mapSize.y, mapSize / 2);
+		mapSize = cRoom1x2PixelSize;
+		cam.Init(gg.scale, gg.designSize.x / mapSize.x, mapSize / 2);
 		sortContainer.Resize<true>((int32_t)cRoomMaxPixelSize.y);
-		gridBuildings.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize), std::ceilf(mapSize.x / cCellPixelSize));
+		gridBuildings.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize)
+			, std::ceilf(mapSize.x / cCellPixelSize));
 		phys.Emplace()->Init(this);
 
 		floorMaskFB.Init();
 		floorMaskTex.Emplace()->Make(mapSize);
 
+		//                     1 1 1 1 1
+		// 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+		// [][][][][][][]  [][][][][][][]	0
+		// []                          []	1
+		// []                          []	2
+		// []                          []	3
+		//                               	4
+		// []                          []	5
+		// []                          []	6
+		// []                          []	7
+		// []                          []	8
+		// []                          []	9
+		// []                          []	10
+		//                               	11
+		// []                          []	12
+		// []                          []	13
+		// []                          []	14
+		// [][][][][][][]  [][][][][][][]	15
 
-		// [][][][][][][]  [][][][][][][]
-		// []                          []
-		// []                          []
-		// []                          []
-		//                               
-		// []                          []
-		// []                          []
-		// []                          []
-		// [][][][][][][]  [][][][][][][]
-
+		// 顶边
 		GenWallHorizontal(0, 6, 0);
 		GenDoorHorizontal(7, 0);
 		GenWallHorizontal(8, 14, 0);
-
-		GenWallHorizontal(0, 6, 8);
-		GenDoorHorizontal(7, 8);
-		GenWallHorizontal(8, 14, 8);
-
+		// 底边
+		GenWallHorizontal(0, 6, 15);
+		GenDoorHorizontal(7, 15);
+		GenWallHorizontal(8, 14, 15);
+		// 左边
 		GenWallVertical(0, 1, 3, true, false);
 		GenDoorVertical(0, 4);
-		GenWallVertical(0, 5, 7, false, true);
+		GenWallVertical(0, 5, 10, false, false);
+		GenDoorVertical(0, 11);
+		GenWallVertical(0, 12, 14, false, true);
+		// 右边
 		GenWallVertical(14, 1, 3, true, false);
 		GenDoorVertical(14, 4);
-		GenWallVertical(14, 5, 7, false, true);
+		GenWallVertical(14, 5, 10, false, false);
+		GenDoorVertical(14, 11);
+		GenWallVertical(14, 12, 14, false, true);
 
-		GenPlayer(7, 4);
+		GenPlayer(7, 7);
 
 		for (int x = 1; x <= 13; ++x) {
-			for (int y = 1; y <= 7; ++y) {
-				if (x == 7 && y == 4) continue;
+			for (int y = 1; y <= 14; ++y) {
+				if (x == 7 && y == 7) continue;
 				GenBucket(x, y);
 			}
 		}
-
-		//GenBucket(6, 4);
-		//GenBucket(8, 4);
-		//GenBucket(7, 3);
-		//GenBucket(7, 5);
 	}
 
 	void Scene::Update() {

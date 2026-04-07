@@ -20,6 +20,11 @@ namespace Global {
 	}
 
 	void Game::GLInit() {
+		// check some env args
+		GLint maxTextureSize;
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+		xx::CoutN("maxTextureSize = ", maxTextureSize);
+
 		// init env
 		sgrdd.Init(64, 64);
 

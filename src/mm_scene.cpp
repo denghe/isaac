@@ -4,6 +4,7 @@
 #include "t2_.h"
 #include "t3_.h"
 #include "t4_scene.h"
+#include "t5_.h"
 
 namespace MainMenu {
 
@@ -40,6 +41,10 @@ namespace MainMenu {
 
 		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"连锁事件")).SetLabelBorder().onClicked = [this] {
 			gg.MakeScene<Test4::Scene>()->Init();
+		};
+
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"大地图摄像头控制")).SetLabelBorder().onClicked = [this] {
+			gg.MakeScene<Test5::Scene>()->Init();
 		};
 
 		L.InitEnd();
