@@ -69,6 +69,10 @@ namespace Test3 {
 		//gridItems.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize), std::ceilf(mapSize.x / cCellPixelSize));
 		phys.Emplace()->Init(this);
 
+		floorMaskFB.Init();
+		floorMaskTex.Emplace()->Make(mapSize);
+
+
 		// [][][][][][][]  [][][][][][][]
 		// []                          []
 		// []                          []
@@ -180,10 +184,11 @@ namespace Test3 {
 		// bg color
 		//gg.Quad().DrawTinyFrame(gg.embed.shape_dot, 0, 0.5f, gg.windowSize, 0, 1, { 0x81,0xbd,0x57,255 });
 
-		// todo: 地板 render texture ( 血迹, 爆炸痕迹等 )
+		// todo: 大地图镜头控制
 
-		for (int i = 0; i < gridBuildings.numRows; ++i) {
-			for (int j = 0; j < gridBuildings.numCols; ++j) {
+		// 绘制地板纹理
+		for (int32_t i = 0; i < gridBuildings.numRows; ++i) {
+			for (int32_t j = 0; j < gridBuildings.numCols; ++j) {
 				XY p{ j * cCellPixelSize, i * cCellPixelSize };
 				gg.Quad().DrawTinyFrame(gg.pics.cell_floor, cam.ToGLPos(p), {0,1}, cam.scale, 0);
 			}
@@ -192,6 +197,18 @@ namespace Test3 {
 		// 背景部分绘制
 		for (auto& o : walls) o->Draw();
 		for (auto& o : doors) o->Draw();
+
+		// 地板 render texture ( 血迹, 爆炸痕迹等 )
+		if (floorMasks.len) {
+			// 将数据里的东西画到 render texture 上并清空
+			floorMaskFB.DrawTo(floorMaskTex, {}, [this] {
+				for (auto& o : floorMasks) {
+					gg.Quad().DrawFrame(o.frame, cam.ToGLPos(o.pos), cam.scale * o.scale, o.radians, o.colorplus, o.color);
+				}
+			});
+			floorMasks.Clear();
+		}
+		gg.Quad().Draw(*floorMaskTex, *floorMaskTex, {});
 
 		// sort order by y
 		for (auto& o : players) SortContainerAdd(o.pointer);

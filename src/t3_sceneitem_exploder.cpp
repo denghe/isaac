@@ -49,6 +49,15 @@ namespace Test3 {
 			radius += inc;
 			scale = radius * 2.f / gg.pics.cell_bucket.uvRect.w;
 		}
+		// 在地板上留下痕迹
+		scene->floorMasks.Emplace(FloorMask{
+			.frame = gg.pics.cell_bucket,
+			.pos = pos,
+			.scale = scale,
+			.radians = radians,
+			.colorplus = 1.f,//colorplus
+			.color = {0,0,0,66}
+		});
 		// 第二阶段，颜色淡出
 		// 计算需要多少帧，每帧的 alpha 增量
 		numSteps = (int32_t)std::ceilf(cFadeoutDuration * gg.cFps);
