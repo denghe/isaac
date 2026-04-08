@@ -143,6 +143,11 @@ namespace Test5 {
 			, scale * scene->cam.scale, radians);
 	}
 
+	void Player::DrawLight() {
+		gg.Quad().DrawFrame(gg.pics.c64_light, scene->cam.ToGLPos(pos)
+			, (2048.f / 64.f) * scene->cam.scale);
+	}
+
 	void Player::Dispose() {
 		assert(scene);
 		assert(!disposing);

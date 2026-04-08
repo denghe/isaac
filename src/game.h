@@ -30,6 +30,7 @@ namespace Global {
 		xx::Rnd rnd;
 		xx::SpaceGridRingDiffuseData sgrdd;
 		_pics pics;
+		xx::Shared<xx::GLTexture> picsTex;
 		// ...
 
 		void Init() override;

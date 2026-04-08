@@ -35,7 +35,7 @@ namespace Global {
 		(uiTips = ui->Make<xx::Label>())->Init(2, p9, a9, 32.f)(U"hotkeys: ESC, [, ]");
 
 		// begin load res
-		pics.Load("res/_pics.png");// ->SetParm(GL_LINEAR);
+		picsTex = pics.Load("res/_pics.png");
 		// ...
 
 		// hide hardware mouse( scene can draw custom mouse cursor )

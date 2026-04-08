@@ -38,7 +38,7 @@ namespace Test3 {
 		xx::List<xx::Shared<Player>> players;
 		xx::List<xx::Shared<Exploder>> exploders;
 
-		xx::FrameBuffer floorMaskFB;
+		xx::FrameBuffer frameBuffer;
 		xx::Shared<xx::GLTexture> floorMaskTex;
 		xx::List<FloorMask> floorMasks;
 

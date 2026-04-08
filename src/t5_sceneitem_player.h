@@ -23,6 +23,7 @@ namespace Test5 {
 		void Init(Scene* scene_, XY pos_);
 		void Update() override;
 		void Draw() override;
+		void DrawLight() override;
 		void Dispose() override;
 	};
 

@@ -38,6 +38,8 @@ namespace Global {
 
 		// 绘制
 		virtual void Draw() {};
+		virtual void DrawShadow() {};
+		virtual void DrawLight() {};
 
 		// 删除对象
 		virtual void Dispose() {};

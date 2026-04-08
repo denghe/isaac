@@ -40,7 +40,7 @@ namespace Test5 {
 		xx::List<xx::Shared<Exploder>> exploders;
 		xx::List<xx::Shared<PlayerBullet>> playerBullets;
 
-		xx::FrameBuffer floorMaskFB;
+		xx::FrameBuffer frameBuffer;
 		xx::Shared<xx::GLTexture> floorMaskTex;
 		xx::List<FloorMask> floorMasks;
 

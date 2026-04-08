@@ -68,7 +68,7 @@ namespace Test3 {
 		gridBuildings.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize), std::ceilf(mapSize.x / cCellPixelSize));
 		phys.Emplace()->Init(this);
 
-		floorMaskFB.Init();
+		frameBuffer.Init();
 		floorMaskTex.Emplace()->Make(mapSize);
 
 
@@ -200,7 +200,7 @@ namespace Test3 {
 		// 地板 render texture ( 血迹, 爆炸痕迹等 )
 		if (floorMasks.len) {
 			// 将数据里的东西画到 render texture 上并清空
-			floorMaskFB.DrawTo(floorMaskTex, {}, [this] {
+			frameBuffer.DrawTo(floorMaskTex, {}, [this] {
 				for (auto& o : floorMasks) {
 					gg.Quad().DrawFrame(o.frame, cam.ToGLPos(o.pos), cam.scale * o.scale, o.radians, o.colorplus, o.color);
 				}
