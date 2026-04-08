@@ -3,27 +3,16 @@
 
 namespace Test5 {
 
-	void PlayerBullet::Init(xx::Weak<Player> owner_, XY tarPos_) {
+	void PlayerBullet::Init(xx::Weak<Player> owner_) {
 		typeId = cTypeId;
 		scene = owner_->scene;
 		owner = std::move(owner_);
 
-		// 根据 tarPos 算出发射角度的 cos sin
-		auto p = owner->pos;
-		auto d = tarPos_ - p;
-		auto mag2 = d.x * d.x + d.y * d.y;
-		XY cosSin;
-		if (mag2 > 0.0001f) {
-			auto mag = std::sqrtf(mag2);
-			cosSin = d / mag;
-			owner->lastBulletCosSin = cosSin;
-		}
-		else {
-			cosSin = owner->lastBulletCosSin;
-		}
-
+		auto pp = owner->pos;
+		auto cosSin = owner->cosSin;
+		auto pr = owner->radius;
 		// 起始坐标：从玩家中心点出发，前进玩家半径的距离
-		pos = owner->pos + cosSin * owner->radius;
+		pos = pp + cosSin * pr;
 		y = pos.y;
 		radius = 16.f;
 		scale = radius * 2.f / gg.pics.c32_bullet.uvRect.w;
@@ -44,6 +33,7 @@ namespace Test5 {
 		}
 
 		pos += inc;
+		y = pos.y;
 		// 查找子弹位置的 bucket，爆炸它, 并自杀
 		bool hited{};
 		auto cri = scene->phys->PosToCRIndex(pos);

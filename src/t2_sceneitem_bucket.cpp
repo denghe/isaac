@@ -9,7 +9,7 @@ namespace Test2 {
 		pos = pos_;
 		y = pos.y;
 		radius = cBucketRadius;
-		scale = radius * 2.f / gg.pics.cell_bucket.uvRect.w;
+		scale = radius * 2.f / gg.pics.c128_bucket.uvRect.w;
 		radians = {};
 
 		indexAtContainer = scene->buckets.len - 1;
@@ -23,7 +23,7 @@ namespace Test2 {
 	}
 
 	void Bucket::Draw() {
-		gg.Quad().DrawFrame(gg.pics.cell_bucket, scene->cam.ToGLPos(pos)
+		gg.Quad().DrawFrame(gg.pics.c128_bucket, scene->cam.ToGLPos(pos)
 			, scale * scene->cam.scale, radians);
 	}
 

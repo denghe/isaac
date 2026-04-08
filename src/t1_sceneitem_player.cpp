@@ -9,7 +9,7 @@ namespace Test1 {
 		pos = pos_;
 		y = pos.y;
 		radius = cPlayerRadius;
-		scale = radius * 2.f / gg.pics.cell_player.uvRect.w;
+		scale = radius * 2.f / gg.pics.c128_player.uvRect.w;
 		radians = {};
 
 		indexAtContainer = scene->players.len - 1;
@@ -117,7 +117,7 @@ namespace Test1 {
 	}
 
 	void Player::Draw() {
-		gg.Quad().DrawFrame(gg.pics.cell_player, scene->cam.ToGLPos(pos)
+		gg.Quad().DrawFrame(gg.pics.c128_player, scene->cam.ToGLPos(pos)
 			, scale * scene->cam.scale, radians);
 	}
 

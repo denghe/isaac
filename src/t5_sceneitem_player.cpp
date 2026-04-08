@@ -9,7 +9,7 @@ namespace Test5 {
 		pos = pos_;
 		y = pos.y;
 		radius = cPlayerRadius;
-		scale = radius * 2.f / gg.pics.cell_player.uvRect.w;
+		scale = radius * 2.f / gg.pics.c128_player.uvRect.w;
 		radians = {};
 
 		scene->phys->Add(this);
@@ -115,19 +115,31 @@ namespace Test5 {
 		// todo: 似乎速度值的表现偏慢，需要 fix
 	}
 
+
+	void Player::HandleRotate() {
+		// 令角色始终面对鼠标
+		auto mp = scene->cam.ToLogicPos(gg.mousePos);
+		auto d = mp - pos;
+		auto r = std::atan2f(d.y, d.x);
+		xx::AngleStep(radians, r, cAngleAccLimit);
+		cosSin.x = std::cosf(radians);
+		cosSin.y = std::sinf(radians);
+	}
+
 	void Player::HandleShot() {
 		if (gg.mouse[GLFW_MOUSE_BUTTON_1]) {
-			scene->playerBullets.Emplace().Emplace()->Init(xx::WeakFromThis(this), scene->cam.ToLogicPos(gg.mousePos));
+			scene->playerBullets.Emplace().Emplace()->Init(xx::WeakFromThis(this));
 		}
 	}
 
 	void Player::Update() {
+		HandleRotate();
 		HandleMove();
 		HandleShot();
 	}
 
 	void Player::Draw() {
-		gg.Quad().DrawFrame(gg.pics.cell_player, scene->cam.ToGLPos(pos)
+		gg.Quad().DrawFrame(gg.pics.c128_player, scene->cam.ToGLPos(pos)
 			, scale * scene->cam.scale, radians);
 	}
 

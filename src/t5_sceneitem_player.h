@@ -8,11 +8,16 @@ namespace Test5 {
 
 		static constexpr XY cSpeedMax{ 5000.f };
 		static constexpr XY cAccel{ cSpeedMax * 0.1f };
+		static constexpr float cAngleAccLimit{ xx::gPI * 2 / (gg.cFps * 0.2f) };
 
 		XY lastMoveDir{}, speed{};
-		XY lastBulletCosSin{};		// 存储上次子弹发射方向，在无法计算方向时当作参考
+		// 缓存 radians 对应的 cos sin 值
+		// 角色通过转动角度的方式对准鼠标，有角速度限制
+		// 子弹发射方向靠读取角色 radians, cos, sin 来算相对数据
+		XY cosSin{};
 
 		void HandleMove();
+		void HandleRotate();
 		void HandleShot();
 
 		void Init(Scene* scene_, XY pos_);

@@ -189,7 +189,7 @@ namespace Test3 {
 		for (int32_t i = 0; i < gridBuildings.numRows; ++i) {
 			for (int32_t j = 0; j < gridBuildings.numCols; ++j) {
 				XY p{ j * cCellPixelSize, i * cCellPixelSize };
-				gg.Quad().DrawTinyFrame(gg.pics.cell_floor, cam.ToGLPos(p), {0,1}, cam.scale, 0);
+				gg.Quad().DrawTinyFrame(gg.pics.c128_floor, cam.ToGLPos(p), {0,1}, cam.scale, 0);
 			}
 		}
 

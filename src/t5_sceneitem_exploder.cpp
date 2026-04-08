@@ -47,11 +47,11 @@ namespace Test5 {
 			XX_YIELD(_1);
 			// 体积逐渐变大
 			radius += inc;
-			scale = radius * 2.f / gg.pics.cell_bucket.uvRect.w;
+			scale = radius * 2.f / gg.pics.c128_bucket.uvRect.w;
 		}
 		// 在地板上留下痕迹
 		scene->floorMasks.Emplace(FloorMask{
-			.frame = gg.pics.cell_bucket,
+			.frame = gg.pics.c128_bucket,
 			.pos = pos,
 			.scale = scale,
 			.radians = radians,
@@ -75,7 +75,7 @@ namespace Test5 {
 
 	void Exploder::Draw() {
 		auto c = (uint8_t)(255 * alpha);
-		gg.Quad().DrawFrame(gg.pics.cell_bucket, scene->cam.ToGLPos(pos)
+		gg.Quad().DrawFrame(gg.pics.c128_bucket, scene->cam.ToGLPos(pos)
 			, scale * scene->cam.scale, radians, 1, {c,c,c,c});
 	}
 

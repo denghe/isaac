@@ -9,7 +9,7 @@ namespace Test1 {
 		pos = pos_;
 		y = pos.y;
 		radius = cWallRadius;
-		scale = radius * 2.f / gg.pics.cell_wall.uvRect.w;
+		scale = radius * 2.f / gg.pics.c128_wall.uvRect.w;
 		radians = {};
 
 		indexAtContainer = scene_->walls.len - 1;
@@ -19,7 +19,7 @@ namespace Test1 {
 	}
 
 	void Wall::Draw() {
-		gg.Quad().DrawFrame(gg.pics.cell_wall, scene->cam.ToGLPos(pos)
+		gg.Quad().DrawFrame(gg.pics.c128_wall, scene->cam.ToGLPos(pos)
 			, scale * scene->cam.scale, radians);
 	}
 

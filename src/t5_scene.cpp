@@ -7,6 +7,7 @@ namespace Test5 {
 	void Scene::Init() {
 		ui.Emplace()->InitRoot(gg.scale * cUIScale);
 		cursor.Emplace()->Init();
+		cursor->frame = gg.pics.cursor_cross;
 
 #if 0
 		mapSize = cRoom1x2PixelSize;
@@ -237,7 +238,7 @@ namespace Test5 {
 		for (int32_t i = 0; i < gridBuildings.numRows; ++i) {
 			for (int32_t j = 0; j < gridBuildings.numCols; ++j) {
 				XY p{ j * cCellPixelSize, i * cCellPixelSize };
-				gg.Quad().DrawTinyFrame(gg.pics.cell_floor, cam.ToGLPos(p), {0,1}, cam.scale, 0);
+				gg.Quad().DrawTinyFrame(gg.pics.c128_floor, cam.ToGLPos(p), {0,1}, cam.scale, 0);
 			}
 		}
 

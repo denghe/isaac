@@ -14,7 +14,7 @@ namespace Test5 {
 		XY inc{};
 		float deathTime{};
 
-		void Init(xx::Weak<Player> owner_, XY tarPos_);
+		void Init(xx::Weak<Player> owner_);
 		void Update() override;
 		void Draw() override;
 		void Dispose() override;
