@@ -9,6 +9,7 @@ namespace Test5 {
 	struct Bucket;
 	struct Exploder;
 	struct Player;
+	struct PlayerBullet;
 	struct PhysSystem;
 
 	struct FloorMask {
@@ -37,6 +38,7 @@ namespace Test5 {
 		xx::List<xx::Shared<Bucket>> buckets;
 		xx::Shared<Player> player;
 		xx::List<xx::Shared<Exploder>> exploders;
+		xx::List<xx::Shared<PlayerBullet>> playerBullets;
 
 		xx::FrameBuffer floorMaskFB;
 		xx::Shared<xx::GLTexture> floorMaskTex;

@@ -7,3 +7,4 @@
 #include "t5_sceneitem_player.h"
 #include "t5_sceneitem_wall.h"
 #include "t5_sceneitem_exploder.h"
+#include "t5_sceneitem_player_bullet.h"

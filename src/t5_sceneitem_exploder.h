@@ -7,6 +7,7 @@ namespace Test5 {
 	// 爆炸者( 由炸药桶爆炸时创建，负责爆炸效果和伤害逻辑 )
 	struct Exploder : SceneItem {
 		static constexpr int32_t cTypeId{ 5 };
+
 		static constexpr float cExplodeRadius{ 128.f };
 		static constexpr float cExplodeDuration{ 0.1f };
 		static constexpr float cFadeoutDuration{ 0.3f };

@@ -3,8 +3,6 @@
 
 // 模拟 isaac 这个游戏的一小部分（物理，道具，技能啥的）
 
-// todo: big map camera logic
-
 namespace Test5 {
 	// 这里放置一些常量
 
@@ -29,5 +27,12 @@ namespace Test5 {
 	static constexpr XY cRoom1x2TotalSize{ cRoom1x2ContentSize + 2 };
 	static constexpr XY cRoom1x2PixelSize{ cRoom1x2TotalSize * cCellPixelSize };
 
+	static constexpr XY cRoom2x1ContentSize{ 26, 7 };
+	static constexpr XY cRoom2x1TotalSize{ cRoom2x1ContentSize + 2 };
+	static constexpr XY cRoom2x1PixelSize{ cRoom2x1TotalSize * cCellPixelSize };
+
+	static constexpr XY cRoom2x2ContentSize{ 26, 14 };
+	static constexpr XY cRoom2x2TotalSize{ cRoom2x2ContentSize + 2 };
+	static constexpr XY cRoom2x2PixelSize{ cRoom2x2TotalSize * cCellPixelSize };
 	// ...
 }

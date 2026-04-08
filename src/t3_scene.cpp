@@ -63,7 +63,7 @@ namespace Test3 {
 		cursor.Emplace()->Init();
 
 		mapSize = cRoom1x1PixelSize;
-		cam.Init(gg.scale, gg.designSize.y / mapSize.y, mapSize / 2);
+		cam.Init(gg.scale, gg.designSize.x / cRoom1x1PixelSize.x, mapSize / 2);
 		sortContainer.Resize<true>((int32_t)cRoomMaxPixelSize.y);
 		gridBuildings.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize), std::ceilf(mapSize.x / cCellPixelSize));
 		phys.Emplace()->Init(this);

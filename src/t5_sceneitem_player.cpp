@@ -15,7 +15,7 @@ namespace Test5 {
 		scene->phys->Add(this);
 	}
 
-	void Player::Update() {
+	void Player::HandleMove() {
 
 		// 玩家输入逻辑，支持同时按下相反方向键时切换到另一个方向
 		XY moveDir{};
@@ -111,6 +111,19 @@ namespace Test5 {
 		}
 		// 物理附加加速度
 		scene->phys->At(this).cache.accel += accel;
+
+		// todo: 似乎速度值的表现偏慢，需要 fix
+	}
+
+	void Player::HandleShot() {
+		if (gg.mouse[GLFW_MOUSE_BUTTON_1]) {
+			scene->playerBullets.Emplace().Emplace()->Init(xx::WeakFromThis(this), scene->cam.ToLogicPos(gg.mousePos));
+		}
+	}
+
+	void Player::Update() {
+		HandleMove();
+		HandleShot();
 	}
 
 	void Player::Draw() {

@@ -3,8 +3,6 @@
 
 // 模拟 isaac 这个游戏的一小部分（物理，道具，技能啥的）
 
-// todo: big map camera logic
-
 namespace Test2 {
 	// 这里放置一些常量
 
