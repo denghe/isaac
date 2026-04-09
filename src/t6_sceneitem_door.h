@@ -1,0 +1,14 @@
+﻿#pragma once
+#include "t6_scene.h"
+
+namespace Test6 {
+
+	struct Door : SceneItem {
+		static constexpr int32_t cTypeId{ 2 };
+
+		void Init(Scene* scene_, XY pos_, bool isCenter_);
+		void Draw() override;
+		void Dispose() override;
+	};
+
+}

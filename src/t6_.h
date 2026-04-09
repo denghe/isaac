@@ -1,0 +1,11 @@
+﻿#pragma once
+#include "t6_.h"
+#include "t6_phys.h"
+#include "t6_scene.h"
+#include "t6_sceneitem_bucket.h"
+#include "t6_sceneitem_door.h"
+#include "t6_sceneitem_player.h"
+#include "t6_sceneitem_wall.h"
+#include "t6_sceneitem_exploder.h"
+#include "t6_sceneitem_player_bullet.h"
+#include "t6_dot.h"

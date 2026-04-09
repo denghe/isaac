@@ -1,10 +1,11 @@
 ﻿#include "pch.h"
 #include "mm_scene.h"
-#include "t1_.h"
-#include "t2_.h"
-#include "t3_.h"
+//#include "t1_.h"
+//#include "t2_.h"
+//#include "t3_.h"
 #include "t4_scene.h"
 #include "t5_.h"
+#include "t6_.h"
 
 namespace MainMenu {
 
@@ -27,33 +28,39 @@ namespace MainMenu {
 		L.Append(C->Make<xx::Label>()->Init(2, 0, 0, fontSize * 3)(U"以撒模拟")).SetBorder();
 		L.EndLine();
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"密集投放炸弹桶v1")).SetLabelBorder().onClicked = [this] {
-			SetDelayCmd([this] {
-				gg.MakeScene<Test1::Scene>()->Init();
-			});
-		};
+		//L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"密集投放炸弹桶v1")).SetLabelBorder().onClicked = [this] {
+		//	SetDelayCmd([this] {
+		//		gg.MakeScene<Test1::Scene>()->Init();
+		//	});
+		//};
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"密集投放炸弹桶v2")).SetLabelBorder().onClicked = [this] {
-			SetDelayCmd([this] {
-				gg.MakeScene<Test2::Scene>()->Init();
-			});
-		};
+		//L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"密集投放炸弹桶v2")).SetLabelBorder().onClicked = [this] {
+		//	SetDelayCmd([this] {
+		//		gg.MakeScene<Test2::Scene>()->Init();
+		//	});
+		//};
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"连环引爆炸弹桶")).SetLabelBorder().onClicked = [this] {
-			SetDelayCmd([this] {
-				gg.MakeScene<Test3::Scene>()->Init();
-			});
-		};
+		//L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"连环引爆炸弹桶")).SetLabelBorder().onClicked = [this] {
+		//	SetDelayCmd([this] {
+		//		gg.MakeScene<Test3::Scene>()->Init();
+		//	});
+		//};
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"连锁事件")).SetLabelBorder().onClicked = [this] {
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"连锁事件测试")).SetLabelBorder().onClicked = [this] {
 			SetDelayCmd([this] {
 				gg.MakeScene<Test4::Scene>()->Init();
 			});
 		};
 
-		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"大地图摄像头控制")).SetLabelBorder().onClicked = [this] {
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"物理移动射击爆炸光效")).SetLabelBorder().onClicked = [this] {
 			SetDelayCmd([this] {
 				gg.MakeScene<Test5::Scene>()->Init();
+			});
+		};
+
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"测试DOT效果")).SetLabelBorder().onClicked = [this] {
+			SetDelayCmd([this] {
+				gg.MakeScene<Test6::Scene>()->Init();
 			});
 		};
 

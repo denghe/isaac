@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
-#include "t5_.h"
+#include "t6_.h"
 
-namespace Test5 {
+namespace Test6 {
 
 	void Bucket::Init(Scene* scene_, XY pos_) {
 		typeId = cTypeId;
@@ -16,10 +16,18 @@ namespace Test5 {
 		assert(scene->buckets[indexAtContainer].pointer == this);
 
 		scene->phys->Add(this);
+
+		// 创建数据面板并初始化
+		properties.Emplace();
+		properties->hp = 100;
 	}
 
 	void Bucket::Update() {
-		// todo: 延迟爆炸逻辑( 驱动 dot, 减血到 <=0 时爆炸 )
+		// 驱动 dot, 减血到 <=0 时爆炸
+		UpdateDots(this);
+		if (properties->hp <= 0) {
+			Explode();
+		}
 	}
 
 	void Bucket::Draw() {
