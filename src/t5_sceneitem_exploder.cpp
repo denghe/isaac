@@ -79,6 +79,11 @@ namespace Test5 {
 			, scale * scene->cam.scale, radians, 1, {c,c,c,c});
 	}
 
+	void Exploder::DrawLight() {
+		gg.Quad().DrawFrame(gg.pics.c64_light, scene->cam.ToGLPos(pos)
+			, (radius * 10.f / 64.f) * scene->cam.scale);
+	}
+
 	void Exploder::Dispose() {
 		assert(scene);
 		assert(!disposing);

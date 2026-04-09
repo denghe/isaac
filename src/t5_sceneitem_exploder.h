@@ -16,6 +16,7 @@ namespace Test5 {
 		void Init(Bucket* bucket_);
 		void Update() override;
 		void Draw() override;
+		void DrawLight() override;
 		void Dispose() override;
 	};
 
