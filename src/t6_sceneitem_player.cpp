@@ -129,7 +129,7 @@ namespace Test6 {
 	}
 
 	void Player::HandleShot() {
-		if (gg.mouse[GLFW_MOUSE_BUTTON_1]) {
+		if (gg.mouse[GLFW_MOUSE_BUTTON_1](0.1f)) {
 			scene->playerBullets.Emplace().Emplace()->Init(xx::WeakFromThis(this));
 		}
 	}

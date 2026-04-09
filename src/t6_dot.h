@@ -54,6 +54,10 @@ namespace Test6 {
 		float nextDamageTime{};
 
 		void Init(PlayerBullet* caster_);
+
+		// 针对已存在 dot: 叠加伤害 并 延续时长
+		void Refresh(PlayerBullet* caster_);
+
 		bool Update(SceneItem* container_) override;
 	};
 

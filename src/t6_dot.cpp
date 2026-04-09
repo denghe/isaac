@@ -19,12 +19,10 @@ namespace Test6 {
 	}
 
 	void DotContainer::MakePlayerDot1(PlayerBullet* caster_) {
-		// 先检查是否已经有相同 dot 存在，如果存在则 叠加伤害 并 延续时长
+		// 先检查是否已经有相同 dot 存在，如果存在则 Refresh
 		for (auto& dot : dots) {
 			if (dot->typeId == PlayerDot1::cTypeId) {
-				auto& o = dot.Cast<PlayerDot1>();
-				o->damage += caster_->damage;
-				o->deathTime += PlayerDot1::cLifespan;
+				dot.Cast<PlayerDot1>()->Refresh(caster_);
 				return;
 			}
 		}
@@ -38,9 +36,13 @@ namespace Test6 {
 	void PlayerDot1::Init(PlayerBullet* caster_) {
 		typeId = cTypeId;
 		scene = caster_->scene;
+		Refresh(caster_);
+	}
+
+	void PlayerDot1::Refresh(PlayerBullet* caster_) {
 		deathTime = scene->time + cLifespan;
-		damage = caster_->damage;
-		nextDamageTime = scene->time + cDamageInterval;
+		damage += caster_->damage;
+		nextDamageTime = 0;	// update 时立即触发一次
 	}
 
 	bool PlayerDot1::Update(SceneItem* container_) {
