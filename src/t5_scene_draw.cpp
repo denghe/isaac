@@ -109,7 +109,7 @@ namespace Test5 {
 		gg.picsTex->SetParm(GL_NEAREST);
 
 		// 设置顶部信息文字显示内容
-		gg.uiText->SetText(xx::ToString("buckets.len = ", buckets.len, "  buckets.len = ", buckets.len));
+		gg.uiText->SetText(xx::ToString("buckets.len = ", buckets.len, "  playerBullets.len = ", playerBullets.len, "  exploders.len = ", exploders.len));
 		gg.DrawNode(ui);
 	}
 
