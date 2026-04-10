@@ -106,6 +106,7 @@ namespace Test6 {
 		gg.ShaderEnd();
 
 		// todo: 血条
+		// 显示触发条件：带属性, 非满血
 
 		// 伤害文字
 		effectTexts.Draw();
