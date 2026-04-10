@@ -20,6 +20,8 @@ namespace Test6 {
 		xx::Shared<xx::GLTexture> floorMaskTex;
 		xx::List<FloorMask> floorMasks;
 
+		xx::EffectTextManager effectTexts;
+
 		void GenWallHorizontal(int32_t xFrom_, int32_t xTo_, int32_t y_, bool leftOverflow_ = false, bool rightOverflow_ = false);
 		void GenWallVertical(int32_t x_, int32_t yFrom_, int32_t yTo_, bool topOverflow_ = false, bool bottomOverflow_ = false);
 		void GenDoorHorizontal(int32_t x_, int32_t y_);

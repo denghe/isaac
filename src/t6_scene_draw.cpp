@@ -107,7 +107,8 @@ namespace Test6 {
 
 		// todo: 血条
 
-		// todo: 伤害文字
+		// 伤害文字
+		effectTexts.Draw();
 
 		// 设置内容绘制时不插值, 让图像清晰锐利
 		gg.picsTex->SetParm(GL_NEAREST);

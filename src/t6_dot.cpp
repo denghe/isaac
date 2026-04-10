@@ -53,6 +53,8 @@ namespace Test6 {
 		// 到达产生伤害的时间点: 产生伤害 并更新时间点
 		if (scene->time >= nextDamageTime) {
 			container_->properties->hp -= damage;	// todo: 改成调用函数 以方便 套公式
+			scene->effectTexts.Add(container_->pos, { 0,-1 }, xx::RGBA8_Red, 2 * scene->cam.scale, -damage, true);
+
 			nextDamageTime = scene->time + cDamageInterval;
 		}
 

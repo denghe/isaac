@@ -30,6 +30,7 @@ namespace Test6 {
 		UpdateItems(exploders);
 
 		phys->Step();
+		effectTexts.Update(time);
 
 		if (/*gg.mouse[GLFW_MOUSE_BUTTON_1]
 			|| */gg.mouse[GLFW_MOUSE_BUTTON_2]
