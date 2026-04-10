@@ -47,7 +47,7 @@ namespace Test6 {
 			}
 		}
 
-		// 查找子弹位置的 bucket，爆炸它, 并自杀
+		// 查找子弹位置的 bucket
 		auto cri = scene->phys->PosToCRIndex(pos);
 		scene->phys->ForeachBy9Break(cri.y, cri.x, [&](PhysSystem::Node& o, float range)->bool {
 			// 目标类型过滤( phys 里拥有众多会产生物理交互的类型, 过滤掉子弹无法攻击的那部分 )
