@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "pch.h"
 #include "_pics.h"
+#include "shader_hpbar.h"
 
 namespace Global {
 	struct SceneBase;
@@ -29,8 +30,11 @@ namespace Global {
 
 		xx::Rnd rnd;
 		xx::SpaceGridRingDiffuseData sgrdd;
+
 		_pics pics;
 		xx::Shared<xx::GLTexture> picsTex;
+
+		xx::Shared<xx::Shader_HPBar> shaderHPBar;
 		// ...
 
 		void Init() override;

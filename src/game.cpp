@@ -36,6 +36,9 @@ namespace Global {
 
 		// begin load res
 		picsTex = pics.Load("res/_pics.png");
+
+		shaderHPBar.Emplace()->Init();
+		shaderHPBar->SetTex(LoadTexture("res/hpbar.png"));
 		// ...
 
 		// hide hardware mouse( scene can draw custom mouse cursor )
