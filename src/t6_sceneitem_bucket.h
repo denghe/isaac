@@ -9,6 +9,7 @@ namespace Test6 {
 		void Init(Scene* scene_, XY pos_);
 		void Update() override;
 		void Draw() override;
+		void DrawHPBar() override;
 		void Dispose() override;
 
 		// 爆炸( 创建爆炸体并自杀 )

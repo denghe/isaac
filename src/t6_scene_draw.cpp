@@ -105,8 +105,8 @@ namespace Test6 {
 		// 立即提交以防止 tex, lightTex 出函数后失效
 		gg.ShaderEnd();
 
-		// todo: 血条
-		// 显示触发条件：带属性, 非满血
+		// 血条
+		for (auto& o : buckets) o->DrawHPBar();
 
 		// 伤害文字
 		effectTexts.Draw();

@@ -20,6 +20,7 @@ namespace Test6 {
 		// 创建数据面板并初始化
 		properties.Emplace();
 		properties->hp = 100;
+		properties->hpMax = 100;
 	}
 
 	void Bucket::Update() {
@@ -33,6 +34,17 @@ namespace Test6 {
 	void Bucket::Draw() {
 		gg.Quad().DrawFrame(gg.pics.c128_bucket, scene->cam.ToGLPos(pos)
 			, scale * scene->cam.scale, radians);
+	}
+
+	void Bucket::DrawHPBar() {
+		// 显示触发条件：带属性, 非满血
+		if (properties->hp == properties->hpMax) return;
+		char buf[32];
+		auto sv = xx::ToStringView(properties->hp, buf);
+		auto percent = (float)properties->hp / properties->hpMax;
+		auto scale = 1.f;
+		auto p = pos + XY{ -55 * scale, -40 };
+		gg.HPBar().Alloc()->Fill(scene->cam.ToGLPos(p), scale * scene->cam.scale, xx::RGBA8_Red, percent, sv);
 	}
 
 	void Bucket::Dispose() {

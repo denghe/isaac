@@ -4,7 +4,7 @@
 namespace Test6 {
 
 	struct Properties {
-		int32_t hp{};
+		int32_t hp{}, hpMax{};
 	};
 
 	struct Scene;
@@ -16,6 +16,8 @@ namespace Test6 {
 
 		// 如果 item 是具有 属性面板 的对象，则可以创建并填充这个成员
 		xx::Shared<Properties> properties;
+
+		virtual void DrawHPBar() {};
 	};
 
 	struct GridCache {

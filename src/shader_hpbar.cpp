@@ -4,6 +4,21 @@
 
 namespace xx {
 
+    void Shader_HPBarData::Fill(XY pos_, XY scale_, xx::RGBA8 color_, float value_, std::string_view sv_) {
+        pos = pos_;
+        scale = scale_;
+        color = color_;
+        value = value_;
+
+        auto buf = sv_.data();
+        auto len = sv_.size();
+        auto tar = (uint8_t*)&numbers;
+        for (size_t i = 0; i < len; ++i) {
+            tar[i] = buf[i] - 48;
+        }
+        tar[15] = (uint8_t)len;
+    }
+
     void Shader_HPBar::Init() {
 
         v = LoadGLVertexShader({ XX_SHADER_CODE_FIRST_LINE R"(
@@ -156,50 +171,13 @@ void main() {
         tex = std::move(tex_);
     }
 
-    Shader_HPBarData* Shader_HPBar::Draw(std::string_view sv) {
-        assert(sv.size());
+    Shader_HPBarData* Shader_HPBar::Alloc() {
         assert(GameBase::instance->shader == this);
         if (count + 1 > maxNums) {
             Commit();
         }
         auto r = &data[count];
         count += 1;
-
-        r->pos = {};
-        r->scale = 1;
-        r->color = xx::RGBA8_White;
-        r->value = 1;
-
-        auto buf = sv.data();
-        auto len = sv.size();
-        auto tar = (uint8_t*)&r->numbers;
-        for (size_t i = 0; i < len; ++i) {
-            tar[i] = buf[i] - 48;
-        }
-        tar[15] = (uint8_t)len;
         return r;
-    }
-
-    Shader_HPBarData* Shader_HPBar::Draw(uint32_t v) {
-        return Draw(xx::ToString(v));
-    }
-
-    Shader_HPBarData* Shader_HPBar::Draw(uint32_t v1, uint32_t v2) {
-        auto s = xx::ToString(v1);
-        s.push_back((char)58);
-        xx::Append(s, v2);
-        auto r = Draw(s);
-        r->value = (float)v1 / v2;
-        return r;
-    }
-
-    void Shader_HPBar::Draw(Shader_HPBarData const& d_) {
-        assert(GameBase::instance->shader == this);
-        if (count + 1 > maxNums) {
-            Commit();
-        }
-        auto r = &data[count];
-        count += 1;
-        memcpy(r, &d_, sizeof(d_));
     }
 }

@@ -8,6 +8,8 @@ namespace xx {
         xx::RGBA8 color{ 255, 255, 255, 255 };  // u8 * 4
         uint32_t numbers[4];                    // u32 * 4 / u8 * 16   // last one is len
         float value{};                          // float * 1
+
+        void Fill(XY pos_, XY scale_, xx::RGBA8 color_, float value_, std::string_view sv_);
     };
 
     struct Shader_HPBar : xx::Shader {
@@ -26,10 +28,7 @@ namespace xx {
         virtual void End() override;
         void Commit();
         void SetTex(Shared<GLTexture> tex_);
-        Shader_HPBarData* Draw(uint32_t v);
-        Shader_HPBarData* Draw(uint32_t v1, uint32_t v2);
-        Shader_HPBarData* Draw(std::string_view sv);
-        void Draw(Shader_HPBarData const& d_);
+        Shader_HPBarData* Alloc();
     };
 
 }

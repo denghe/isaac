@@ -34,7 +34,8 @@ namespace Global {
 		_pics pics;
 		xx::Shared<xx::GLTexture> picsTex;
 
-		xx::Shared<xx::Shader_HPBar> shaderHPBar;
+		xx::Shader_HPBar shaderHPBar;
+		xx::Shader_HPBar& HPBar() { return ShaderBegin(shaderHPBar); }
 		// ...
 
 		void Init() override;
