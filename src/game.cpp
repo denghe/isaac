@@ -39,6 +39,7 @@ namespace Global {
 
 		shaderHPBar.Init();
 		shaderHPBar.SetTex(LoadTexture("res/hpbar.png"));
+		shaderHPBar2.Init();
 		// ...
 
 		// hide hardware mouse( scene can draw custom mouse cursor )

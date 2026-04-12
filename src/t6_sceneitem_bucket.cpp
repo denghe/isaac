@@ -39,12 +39,19 @@ namespace Test6 {
 	void Bucket::DrawHPBar() {
 		// 显示触发条件：带属性, 非满血
 		if (properties->hp == properties->hpMax) return;
+		auto percent = (float)properties->hp / properties->hpMax;
+#if 0
 		char buf[32];
 		auto sv = xx::ToStringView(properties->hp, buf);
-		auto percent = (float)properties->hp / properties->hpMax;
-		auto scale = 1.f;
-		auto p = pos + XY{ -55 * scale, -40 };
-		gg.HPBar().Alloc()->Fill(scene->cam.ToGLPos(p), scale * scene->cam.scale, xx::RGBA8_Red, percent, sv);
+		auto p = pos + XY{ -55, -40 };
+		gg.HPBar().Alloc()->Fill(scene->cam.ToGLPos(p), scene->cam.scale, xx::RGBA8_Red, percent, sv);
+#else
+		auto p = pos + XY{ -25, -40 };
+		auto siz = XY{ 50, 9 } * scene->cam.scale;
+		if (siz.x < 10) siz.x = 10;
+		if (siz.y < 4) siz.y = 4;
+		gg.HPBar2().Alloc()->Fill(scene->cam.ToGLPos(p), siz, xx::RGBA8_Black, xx::RGBA8_White, xx::RGBA8_Red, percent);
+#endif
 	}
 
 	void Bucket::Dispose() {

@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "_pics.h"
 #include "shader_hpbar.h"
+#include "shader_hpbar2.h"
 
 namespace Global {
 	struct SceneBase;
@@ -36,6 +37,8 @@ namespace Global {
 
 		xx::Shader_HPBar shaderHPBar;
 		xx::Shader_HPBar& HPBar() { return ShaderBegin(shaderHPBar); }
+		xx::Shader_HPBar2 shaderHPBar2;
+		xx::Shader_HPBar2& HPBar2() { return ShaderBegin(shaderHPBar2); }
 		// ...
 
 		void Init() override;
