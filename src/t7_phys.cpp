@@ -146,25 +146,11 @@ namespace Test7 {
 			o.cache.pos = o.cache.pos + inc;
 			o.cache.accel = {};
 
-			// 遍历 item 邻居建筑处理碰撞( 直接修改 item 位置将其移到建筑范围外 )
-			using G = decltype(scene->gridBuildings);
-			auto& g = scene->gridBuildings;
-			auto cri = g.PosToCRIndex(o.cache.pos);
-			g.ForeachBy9(cri.y, cri.x, [&](G::Node& node, float range)->void {
-				auto d = o.cache.pos - node.cache.pos;
-				auto mag2 = d.x * d.x + d.y * d.y;
-				auto r = node.cache.radius + o.cache.radius;
-				auto rr = r * r;
-				// 相交 但没有完全重叠
-				if (mag2 < rr && mag2 > 0.0001f) {
-					auto mag = std::sqrtf(mag2);
-					auto norm = d / mag;
-					o.cache.pos = node.cache.pos + norm * r;
-				}
-				});
+			// 处理当前对象和邻居建筑碰撞( 直接修改位置将其移到建筑范围外 )
+			scene->HandleBuildingsCross(o.cache.pos, o.cache.radius);
 
 			// 更新数据
-			cri = PosToCRIndex(o.cache.pos);
+			auto cri = PosToCRIndex(o.cache.pos);
 			Base::Base::Update(ni, cri.y, cri.x);
 			if (o.value->pos != o.cache.pos) {
 				o.value->pos = o.cache.pos;

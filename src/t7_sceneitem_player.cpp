@@ -3,6 +3,8 @@
 
 namespace Test7 {
 
+	// todo: 场景内传送门，不可破坏地形 ( 阻挡 移动 + 子弹的，不阻挡子弹的 )
+
 	void Player::Init(Scene* scene_, XY pos_) {
 		typeId = cTypeId;
 		scene = scene_;
@@ -17,8 +19,15 @@ namespace Test7 {
 		damage = 1;
 	}
 
-	void Player::HandleMove() {
+	void Player::HandleDoors() {
+		// 判断是否走到了 门 的位置，触发房间切换
+		if (scene->IsCrossDoor(pos, radius)) {
+			// todo: 处理函数或许应该 挂在门上。针对不同的对象 穿越门 有着不同的处理方式
+			xx::CoutN("visit door");
+		}
+	}
 
+	void Player::HandleMove() {
 		// 玩家输入逻辑，支持同时按下相反方向键时切换到另一个方向
 		XY moveDir{};
 		// x
@@ -128,13 +137,14 @@ namespace Test7 {
 	}
 
 	void Player::HandleShot() {
+		// 处理子弹射击逻辑
 		if (gg.mouse[GLFW_MOUSE_BUTTON_1](0.1f)) {
 			scene->playerBullets.Emplace().Emplace()->Init(xx::WeakFromThis(this));
 		}
 	}
 
 	void Player::Update() {
-		// todo: 判断是否走到了 门 的位置，触发房间切换
+		HandleDoors();
 		HandleRotate();
 		HandleMove();
 		HandleShot();

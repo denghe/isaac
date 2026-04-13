@@ -17,12 +17,15 @@ namespace Global {
 		float y{};
 		SceneItemBase* next{};
 
+		// 放一些常用 bool 成员在此，充分利用内存对齐
 		// 所有查询行为都要检测这个标记，正在删除的对象不参与任何行为，包括被删除对象自己
-		bool disposing{};
-
-		// 再放一些常用 bool 成员在此，充分利用内存对齐
-		bool flipX{}, isCenter{};
-		// ...
+		bool disposing{}
+			// 显示时反转左右
+			, flipX{}
+			// 像门之类的对象，如果是位于中间那格，该标记将为 true
+			, isCenter{}
+			// 门的开关状态。如果为 true 则不参与物理碰撞
+			, isOpened{};
 
 		// 记录在容器中的位置, 方便高速随机删除
 		int32_t indexAtContainer{ -1 }, indexAtGrid{ -1 };

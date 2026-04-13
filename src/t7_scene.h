@@ -30,6 +30,9 @@ namespace Test7 {
 		xx::Shared<Bucket>& GenBucket(int32_t x_, int32_t y_);
 
 		void OpenDoors();
+		void CloseDoors();
+		void HandleBuildingsCross(XY& pos_, float radius_);
+		bool IsCrossDoor(XY const& pos_, float radius_);
 
 		void Init() override;
 		void Update() override;

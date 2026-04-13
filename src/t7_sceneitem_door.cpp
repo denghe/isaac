@@ -20,8 +20,13 @@ namespace Test7 {
 	}
 
 	void Door::Draw() {
+		// 在颜色上体现 open 状态
+		auto color = xx::RGBA8_White;
+		if (isOpened) {
+			color = {55,55,55,55};
+		}
 		gg.Quad().DrawFrame(gg.pics.c128_door, scene->cam.ToGLPos(pos)
-			, scale * scene->cam.scale, radians);
+			, scale * scene->cam.scale, radians, 1, color);
 	}
 
 	void Door::Dispose() {
@@ -44,6 +49,16 @@ namespace Test7 {
 		container.Back()->indexAtContainer = i;
 		indexAtContainer = -1;
 		container.SwapRemoveAt(i);
+	}
+
+	void Door::Open() {
+		assert(isOpened == false);
+		isOpened = true;
+	}
+
+	void Door::Close() {
+		assert(isOpened);
+		isOpened = false;
 	}
 
 }
