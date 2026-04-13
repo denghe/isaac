@@ -1,8 +1,7 @@
 ﻿#pragma once
 #include "pch.h"
 #include "_pics.h"
-#include "shader_hpbar.h"
-#include "shader_hpbar2.h"
+#include "shader_hpbarex.h"
 
 namespace Global {
 	struct SceneBase;
@@ -35,10 +34,8 @@ namespace Global {
 		_pics pics;
 		xx::Shared<xx::GLTexture> picsTex;
 
-		xx::Shader_HPBar shaderHPBar;
-		xx::Shader_HPBar& HPBar() { return ShaderBegin(shaderHPBar); }
-		xx::Shader_HPBar2 shaderHPBar2;
-		xx::Shader_HPBar2& HPBar2() { return ShaderBegin(shaderHPBar2); }
+		xx::Shader_HPBarEx shaderHPBarEx;
+		xx::Shader_HPBarEx& HPBarEx() { return ShaderBegin(shaderHPBarEx); }
 		// ...
 
 		void Init() override;

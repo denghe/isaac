@@ -1,10 +1,10 @@
 ﻿#include "pch.h"
 #include "xx_gamebase.h"
-#include "shader_hpbar.h"
+#include "shader_hpbarex.h"
 
 namespace xx {
 
-    void Shader_HPBarData::Fill(XY pos_, XY scale_, xx::RGBA8 color_, float value_, std::string_view sv_) {
+    void Shader_HPBarExData::Fill(XY pos_, XY scale_, xx::RGBA8 color_, float value_, std::string_view sv_) {
         pos = pos_;
         scale = scale_;
         color = color_;
@@ -19,7 +19,7 @@ namespace xx {
         tar[15] = (uint8_t)len;
     }
 
-    void Shader_HPBar::Init() {
+    void Shader_HPBarEx::Init() {
 
         v = LoadGLVertexShader({ XX_SHADER_CODE_FIRST_LINE R"(
 uniform vec2 uCxy;	            // screen center coordinate
@@ -113,20 +113,20 @@ void main() {
         glGenBuffers(1, (GLuint*)&vb);
         glBindBuffer(GL_ARRAY_BUFFER, vb);
 
-        glVertexAttribPointer(aPosScale, 4, GL_FLOAT, GL_FALSE, sizeof(Shader_HPBarData), 0);
+        glVertexAttribPointer(aPosScale, 4, GL_FLOAT, GL_FALSE, sizeof(Shader_HPBarExData), 0);
         glVertexAttribDivisor(aPosScale, 1);
         glEnableVertexAttribArray(aPosScale);
 
-        glVertexAttribPointer(aColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Shader_HPBarData), (GLvoid*)offsetof(Shader_HPBarData, color));
+        glVertexAttribPointer(aColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Shader_HPBarExData), (GLvoid*)offsetof(Shader_HPBarExData, color));
         glVertexAttribDivisor(aColor, 1);
         glEnableVertexAttribArray(aColor);
 
         // "I" Pointer for int
-        glVertexAttribIPointer(aHPBar, 4, GL_INT, sizeof(Shader_HPBarData), (GLvoid*)offsetof(Shader_HPBarData, numbers));
+        glVertexAttribIPointer(aHPBar, 4, GL_INT, sizeof(Shader_HPBarExData), (GLvoid*)offsetof(Shader_HPBarExData, numbers));
         glVertexAttribDivisor(aHPBar, 1);
         glEnableVertexAttribArray(aHPBar);
 
-        glVertexAttribPointer(aValue, 1, GL_FLOAT, GL_FALSE, sizeof(Shader_HPBarData), (GLvoid*)offsetof(Shader_HPBarData, value));
+        glVertexAttribPointer(aValue, 1, GL_FLOAT, GL_FALSE, sizeof(Shader_HPBarExData), (GLvoid*)offsetof(Shader_HPBarExData, value));
         glVertexAttribDivisor(aValue, 1);
         glEnableVertexAttribArray(aValue);
 
@@ -136,7 +136,7 @@ void main() {
         CheckGLError();
     }
 
-    void Shader_HPBar::Begin() {
+    void Shader_HPBarEx::Begin() {
         assert(!GameBase::instance->shader);
         glUseProgram(p);
         glActiveTexture(GL_TEXTURE0/* + textureUnit*/);
@@ -145,16 +145,16 @@ void main() {
         glBindVertexArray(va);
     }
 
-    void Shader_HPBar::End() {
+    void Shader_HPBarEx::End() {
         assert(GameBase::instance->shader == this);
         if (count) {
             Commit();
         }
     }
 
-    void Shader_HPBar::Commit() {
+    void Shader_HPBarEx::Commit() {
         glBindBuffer(GL_ARRAY_BUFFER, vb);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Shader_HPBarData) * count, data.get(), GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Shader_HPBarExData) * count, data.get(), GL_STREAM_DRAW);
 
         glBindTexture(GL_TEXTURE_2D, *tex);
         glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, count);
@@ -167,11 +167,11 @@ void main() {
         count = 0;
     }
 
-    void Shader_HPBar::SetTex(Shared<GLTexture> tex_) {
+    void Shader_HPBarEx::SetTex(Shared<GLTexture> tex_) {
         tex = std::move(tex_);
     }
 
-    Shader_HPBarData* Shader_HPBar::Alloc() {
+    Shader_HPBarExData* Shader_HPBarEx::Alloc() {
         assert(GameBase::instance->shader == this);
         if (count + 1 > maxNums) {
             Commit();

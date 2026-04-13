@@ -50,7 +50,7 @@ namespace Test6 {
 		auto siz = XY{ 50, 9 } * scene->cam.scale;
 		if (siz.x < 10) siz.x = 10;
 		if (siz.y < 4) siz.y = 4;
-		gg.HPBar2().Alloc()->Fill(scene->cam.ToGLPos(p), siz, xx::RGBA8_Black, xx::RGBA8_White, xx::RGBA8_Red, percent);
+		gg.HPBar().Alloc()->Fill(scene->cam.ToGLPos(p), siz, xx::RGBA8_Black, xx::RGBA8_White, xx::RGBA8_Red, percent);
 #endif
 	}
 
