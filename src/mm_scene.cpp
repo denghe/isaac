@@ -6,6 +6,7 @@
 #include "t4_scene.h"
 #include "t5_.h"
 #include "t6_.h"
+#include "t7_.h"
 
 namespace MainMenu {
 
@@ -61,6 +62,12 @@ namespace MainMenu {
 		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"测试DOT效果")).SetLabelBorder().onClicked = [this] {
 			SetDelayCmd([this] {
 				gg.MakeScene<Test6::Scene>()->Init();
+			});
+		};
+
+		L.Append(C->Make<xx::LabelButton>()->Init(2, 0, 0, fontSize)(U"测试进门切换地图")).SetLabelBorder().onClicked = [this] {
+			SetDelayCmd([this] {
+				gg.MakeScene<Test7::Scene>()->Init();
 			});
 		};
 
