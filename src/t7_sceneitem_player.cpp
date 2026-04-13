@@ -117,7 +117,6 @@ namespace Test7 {
 		// todo: 似乎速度值的表现偏慢，需要 fix
 	}
 
-
 	void Player::HandleRotate() {
 		// 令角色始终面对鼠标
 		auto mp = scene->cam.ToLogicPos(gg.mousePos);
@@ -135,6 +134,7 @@ namespace Test7 {
 	}
 
 	void Player::Update() {
+		// todo: 判断是否走到了 门 的位置，触发房间切换
 		HandleRotate();
 		HandleMove();
 		HandleShot();

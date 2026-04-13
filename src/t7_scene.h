@@ -29,6 +29,8 @@ namespace Test7 {
 		void GenPlayer(int32_t x_, int32_t y_);
 		xx::Shared<Bucket>& GenBucket(int32_t x_, int32_t y_);
 
+		void OpenDoors();
+
 		void Init() override;
 		void Update() override;
 		void FixedUpdate() override;

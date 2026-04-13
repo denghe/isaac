@@ -57,13 +57,11 @@ namespace Test7 {
 			for (int y = 1; y <= 7; ++y) {
 				if (x == 7 && y == 4) continue;
 				auto& o = GenBucket(x, y);
-				// 注册桶被销毁时的回调，如果所有桶都被销毁了，就执行开门逻辑
+				// 注册桶被销毁时的回调，如果所有桶都被销毁了，就开门
 				o->disposeCallbacks.Add([counter = bucketCounter, this]() {
-					// 最后一个桶被销毁了，计数器的共享计数应该是 1
-					// （当前回调持有的这个共享指针），在这里执行开门逻辑
+					// 最后一个桶被销毁了，计数器的共享计数应该是 1. 执行开门逻辑
 					if(counter.GetSharedCount() == 1) {
-						// todo
-						doors.Clear();
+						OpenDoors();
 					}
 				});
 			}
