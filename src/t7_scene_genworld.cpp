@@ -4,10 +4,9 @@
 namespace Test7 {
 
 	void Scene::GenWorld() {
-		// todo: 创建门的时候 顺便配置 传送方式 地点啥的
-		// 这需要完整的大地图系统
-		// 门并非导致玩家会远距离传送 玩家只是物理通过
-		// camera 也只是逻辑上被临时限制在 一个房间的区域
+		// todo: 
+		// 多房间世界
+		// 需运行时判断玩家所在房间尺寸并限制 camera 范围，玩家进门的时候 camera 动画体现房间切换效果
 
 		// 图元：　墙门玩
 		std::u32string_view mapText = UR"(
