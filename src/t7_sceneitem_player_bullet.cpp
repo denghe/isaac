@@ -103,6 +103,7 @@ namespace Test7 {
 			needDispose = true;
 		}
 		if (needDispose) {
+			// todo: 弄点子弹命中建筑消失的粒子？
 			Dispose();
 			return;
 		}

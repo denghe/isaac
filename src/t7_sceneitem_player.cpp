@@ -177,9 +177,9 @@ namespace Test7 {
 	void Player::MoveTo(Scene* newScene_) {
 		assert(scene != newScene_);
 		scene->phys->Remove(this);
-		scene = newScene_;
 		newScene_->phys->Add(this);
-		newScene_->player = xx::SharedFromThis(this);
+		newScene_->player = std::move(scene->player);
+		scene = newScene_;
 	}
 
 }

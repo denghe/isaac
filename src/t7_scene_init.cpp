@@ -9,12 +9,13 @@ namespace Test7 {
 		ui.Emplace()->InitRoot(gg.scale * cUIScale);
 		cursor.Emplace()->Init();
 		cursor->frame = gg.pics.cursor_cross;
-		GenMap();
+		//GenMap();
+		GenWorld();
 	}
 
 	void Scene::Init() {
 		Init_();
-		GenPlayer(7, 4);
+		//GenPlayer(7, 4);
 	}
 
 	void Scene::Init(Scene* last_) {

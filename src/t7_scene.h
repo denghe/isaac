@@ -22,6 +22,7 @@ namespace Test7 {
 
 		xx::EffectTextManager effectTexts;
 
+		void GenWorld();
 		void GenMap();
 		void GenWallHorizontal(int32_t xFrom_, int32_t xTo_, int32_t y_, bool leftOverflow_ = false, bool rightOverflow_ = false);
 		void GenWallVertical(int32_t x_, int32_t yFrom_, int32_t yTo_, bool topOverflow_ = false, bool bottomOverflow_ = false);

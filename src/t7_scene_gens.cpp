@@ -41,6 +41,9 @@ namespace Test7 {
 		GenWallVertical(14, 5, 7, false, true);
 
 		// todo: 创建门的时候 顺便配置 传送方式 地点啥的
+		// 这需要完整的大地图系统
+		// 门并非导致玩家会远距离传送 玩家只是物理通过
+		// camera 也只是逻辑上被临时限制在 一个房间的区域
 
 		// 桶总数计数器
 		auto bucketCounter = xx::MakeShared<void*>();
