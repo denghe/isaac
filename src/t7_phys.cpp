@@ -46,19 +46,21 @@ namespace Test7 {
 			auto& b1 = buckets[bi];
 			if (b1 < 0) continue;
 			// 9格检测，当前格子和周围8格，越界的格子会被丢弃( 不参与碰撞检测 )
-			if (auto b2 = buckets[bi - 1]; b2 >= 0) CalcBB(b1, b2);
+			if (auto bi2 = bi - 1; bi2 >= 0) if (auto b2 = buckets[bi2]; b2 >= 0) CalcBB(b1, b2);
 			if (auto b2 = buckets[bi]; b2 >= 0) CalcBB(b1, b2);
-			if (auto b2 = buckets[bi + 1]; b2 >= 0) CalcBB(b1, b2);
-			if (auto b2 = buckets[bi + numCols - 1]; b2 >= 0) CalcBB(b1, b2);
-			if (auto b2 = buckets[bi + numCols]; b2 >= 0) CalcBB(b1, b2);
-			if (auto b2 = buckets[bi + numCols + 1]; b2 >= 0) CalcBB(b1, b2);
-			if (auto b2 = buckets[bi - numCols - 1]; b2 >= 0) CalcBB(b1, b2);
-			if (auto b2 = buckets[bi - numCols]; b2 >= 0) CalcBB(b1, b2);
-			if (auto b2 = buckets[bi - numCols + 1]; b2 >= 0) CalcBB(b1, b2);
+			if (auto bi2 = bi + 1; bi2 < numCells) if (auto b2 = buckets[bi2]; b2 >= 0) CalcBB(b1, b2);
+			if (auto bi2 = bi + numCols - 1; bi2 < numCells) if (auto b2 = buckets[bi2]; b2 >= 0) CalcBB(b1, b2);
+			if (auto bi2 = bi + numCols; bi2 < numCells) if (auto b2 = buckets[bi2]; b2 >= 0) CalcBB(b1, b2);
+			if (auto bi2 = bi + numCols + 1; bi2 < numCells) if (auto b2 = buckets[bi2]; b2 >= 0) CalcBB(b1, b2);
+			if (auto bi2 = bi - numCols - 1; bi2 >= 0) if (auto b2 = buckets[bi2]; b2 >= 0) CalcBB(b1, b2);
+			if (auto bi2 = bi - numCols; bi2 >= 0) if (auto b2 = buckets[bi2]; b2 >= 0) CalcBB(b1, b2);
+			if (auto bi2 = bi - numCols + 1; bi2 >= 0) if (auto b2 = buckets[bi2]; b2 >= 0) CalcBB(b1, b2);
 		}
 	}
 
-	void PhysSystem::CalcBB(int32_t b1_, int32_t b2_) { 
+	void PhysSystem::CalcBB(int32_t b1_, int32_t b2_) {
+		assert(b1_ >= 0 && b1_ < count);
+		assert(b2_ >= 0 && b2_ < count);
 		// 两个桶内所有节点两两检测
 		// 检测次数限制变量
 		static constexpr int32_t cMaxChecksPerBucket{ 3 };

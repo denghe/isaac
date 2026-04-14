@@ -13,6 +13,9 @@ namespace Test7 {
 
 		void Open();
 		void Close();
+
+		// tar 进门
+		virtual void Visit(SceneItem* tar_);
 	};
 
 }

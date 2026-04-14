@@ -20,10 +20,9 @@ namespace Test7 {
 	}
 
 	void Player::HandleDoors() {
-		// 判断是否走到了 门 的位置，触发房间切换
-		if (scene->IsCrossDoor(pos, radius)) {
-			// todo: 处理函数或许应该 挂在门上。针对不同的对象 穿越门 有着不同的处理方式
-			xx::CoutN("visit door");
+		// 如果过有进门就调用门的访问函数
+		if (auto door = scene->TryGetCrossDoor(pos, radius); door) {
+			door->Visit(this);
 		}
 	}
 
@@ -173,6 +172,14 @@ namespace Test7 {
 
 		// 从容器中移除对象( 释放内存 )
 		scene->player.Reset();
+	}
+
+	void Player::MoveTo(Scene* newScene_) {
+		assert(scene != newScene_);
+		scene->phys->Remove(this);
+		scene = newScene_;
+		newScene_->phys->Add(this);
+		newScene_->player = xx::SharedFromThis(this);
 	}
 
 }

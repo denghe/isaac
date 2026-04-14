@@ -61,4 +61,17 @@ namespace Test7 {
 		isOpened = false;
 	}
 
+	void Door::Visit(SceneItem* tar_) {
+		// 各对象进门事件处理
+		switch (tar_->typeId) {
+		case Player::cTypeId: {
+			// todo: 改玩家坐标
+			// 切换到新场景
+			gg.MakeScene<Scene>()->Init(xx::SharedFromThis(scene));
+			return;
+		}
+		// ...
+		}
+	}
+
 }

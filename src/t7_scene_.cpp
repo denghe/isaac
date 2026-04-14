@@ -32,27 +32,29 @@ namespace Test7 {
 		});
 	}
 
-	bool Scene::IsCrossDoor(XY const& pos_, float radius_) {
+	Door* Scene::TryGetCrossDoor(XY const& pos_, float radius_) {
 		// 遍历 主门 判断 pos_ 是否离中心点足够近
 		using G = decltype(gridBuildings);
 		auto& g = gridBuildings;
 		auto cri = g.PosToCRIndex(pos_);
-		return g.ForeachBy9Break(cri.y, cri.x, [&](G::Node& node, float range)->bool {
-			// 忽略非打开的主门
+		Door* rtv{};
+		g.ForeachBy9Break(cri.y, cri.x, [&](G::Node& node, float range)->bool {
+			// 忽略非门 非打开 非主
 			if (node.value->typeId != Door::cTypeId 
 				|| !node.value->isOpened
 				|| !node.value->isCenter
 				) return false;
 			auto d = pos_ - node.cache.pos;
 			auto mag2 = d.x * d.x + d.y * d.y;
-			auto r = node.cache.radius + radius_;
+			auto r = /*node.cache.radius + */radius_;
 			auto rr = r * r;
-			// 相交
+			// 如果 pos_ 足够接近圆心
 			if (mag2 < rr) {
-				// todo: 如果 pos_ 足够接近圆心
+				rtv = (Door*)node.value;
 				return true;
 			}
 			return false;
 		});
+		return rtv;
 	}
 }

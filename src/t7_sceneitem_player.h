@@ -33,6 +33,9 @@ namespace Test7 {
 		void Draw() override;
 		void DrawLight() override;
 		void Dispose() override;
+
+		// 从一个场景挪到下一个场景( 注销 & 重新注册 phys, 更新 scene )
+		void MoveTo(Scene* newScene_);
 	};
 
 }
