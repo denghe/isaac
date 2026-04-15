@@ -33,7 +33,7 @@ namespace Test4 {
 
 	XY SceneItem::FixPosition(XY pos_) {
 		// 地图边缘检测 回卷
-		auto ms = scene->mapSize;
+		auto ms = scene->mapPixelSize;
 		assert(pos_.x > -ms.x && pos_.x < ms.x * 2);
 		if (pos_.x < 0) pos_.x += ms.x;
 		else if (pos_.x >= ms.x) pos_.x -= ms.x;

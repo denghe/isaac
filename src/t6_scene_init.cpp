@@ -10,15 +10,15 @@ namespace Test6 {
 		cursor.Emplace()->Init();
 		cursor->frame = gg.pics.cursor_cross;
 
-		mapSize = cRoom2x2PixelSize;
-		cam.Init(gg.scale, gg.designSize.x / cRoom1x1PixelSize.x, mapSize / 2);
+		mapPixelSize = cRoom2x2PixelSize;
+		cam.Init(gg.scale, gg.designSize.x / cRoom1x1PixelSize.x, mapPixelSize / 2);
 		sortContainer.Resize<true>((int32_t)cRoomMaxPixelSize.y);
-		gridBuildings.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize)
-			, std::ceilf(mapSize.x / cCellPixelSize));
+		gridBuildings.Init(cCellPixelSize, std::ceilf(mapPixelSize.y / cCellPixelSize)
+			, std::ceilf(mapPixelSize.x / cCellPixelSize));
 		phys.Emplace()->Init(this);
 
 		frameBuffer.Init();
-		floorMaskTex.Emplace()->Make(mapSize);
+		floorMaskTex.Emplace()->Make(mapPixelSize);
 
 		//                     1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2
 		// 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 

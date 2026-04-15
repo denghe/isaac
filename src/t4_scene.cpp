@@ -13,17 +13,17 @@ namespace Test4 {
 	void Scene::Init() {
 		SceneBase::Init();
 
-		mapSize = { 1920 * 4, 1080 * 4 };
-		mapCenterPos = mapSize / 2;
-		cam.Init(gg.scale, gg.designSize.y / mapSize.y, mapCenterPos);
+		mapPixelSize = { 1920 * 4, 1080 * 4 };
+		mapCenterPos = mapPixelSize / 2;
+		cam.Init(gg.scale, gg.designSize.y / mapPixelSize.y, mapCenterPos);
 
 		// 重要：需要大到足以避免 Resize 导致的指针失效. 所有创建行为都要检测个数上限
 		items.Reserve(cNumMaxItems);
 		
 		// 初始化空间索引容器
-		itemsGrid16.Init(16.f, std::ceilf(mapSize.y / 16.f), std::ceilf(mapSize.x / 16.f));
-		itemsGrid32.Init(32.f, std::ceilf(mapSize.y / 32.f), std::ceilf(mapSize.x / 32.f));
-		itemsGrid64.Init(64.f, std::ceilf(mapSize.y / 64.f), std::ceilf(mapSize.x / 64.f));
+		itemsGrid16.Init(16.f, std::ceilf(mapPixelSize.y / 16.f), std::ceilf(mapPixelSize.x / 16.f));
+		itemsGrid32.Init(32.f, std::ceilf(mapPixelSize.y / 32.f), std::ceilf(mapPixelSize.x / 32.f));
+		itemsGrid64.Init(64.f, std::ceilf(mapPixelSize.y / 64.f), std::ceilf(mapPixelSize.x / 64.f));
 
 		// 创建两只怪, 直接指定坐标
 		items.Emplace().Emplace<Monster>()->Init(this, mapCenterPos + XY{ -1200, 0 }, 128.f, xx::RGBA8_Green);

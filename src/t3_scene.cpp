@@ -62,14 +62,14 @@ namespace Test3 {
 		ui.Emplace()->InitRoot(gg.scale * cUIScale);
 		cursor.Emplace()->Init();
 
-		mapSize = cRoom1x1PixelSize;
-		cam.Init(gg.scale, gg.designSize.y / cRoom1x1PixelSize.y, mapSize / 2);
+		mapPixelSize = cRoom1x1PixelSize;
+		cam.Init(gg.scale, gg.designSize.y / cRoom1x1PixelSize.y, mapPixelSize / 2);
 		sortContainer.Resize<true>((int32_t)cRoomMaxPixelSize.y);
-		gridBuildings.Init(cCellPixelSize, std::ceilf(mapSize.y / cCellPixelSize), std::ceilf(mapSize.x / cCellPixelSize));
+		gridBuildings.Init(cCellPixelSize, std::ceilf(mapPixelSize.y / cCellPixelSize), std::ceilf(mapPixelSize.x / cCellPixelSize));
 		phys.Emplace()->Init(this);
 
 		frameBuffer.Init();
-		floorMaskTex.Emplace()->Make(mapSize);
+		floorMaskTex.Emplace()->Make(mapPixelSize);
 
 
 		// [][][][][][][]  [][][][][][][]
@@ -142,8 +142,8 @@ namespace Test3 {
 			|| gg.mouse[GLFW_MOUSE_BUTTON_4]
 			) {
 			auto p = cam.ToLogicPos(gg.mousePos);
-			if (p.x > cCellPixelSize && p.x < mapSize.x - cCellPixelSize
-				&& p.y > cCellPixelSize && p.y < mapSize.y - cCellPixelSize) {
+			if (p.x > cCellPixelSize && p.x < mapPixelSize.x - cCellPixelSize
+				&& p.y > cCellPixelSize && p.y < mapPixelSize.y - cCellPixelSize) {
 
 				size_t count = 0;
 				if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {

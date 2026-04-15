@@ -4,23 +4,27 @@
 namespace Test7 {
 
 	void Scene::GenWorld() {
-		// todo: 
 		// 多房间世界
-
-		// 需运行时判断玩家所在房间尺寸并限制 camera 范围，玩家进门的时候 camera 动画体现房间切换效果
-		// 先扫地图数据，得到所有房间的信息存入 数组。每帧检查玩家坐标，看是否位于当前房间范围内。
-		// 如果不在就去 数组 找并更新当前房间信息，camera 顺便转场
-
-		// 怪物 -- 房间绑定 & 门解锁
-		// 怪物生成时，需先行选择房间
-
-		// 玩家所在房间如果没有怪，需开门
+		// 
+		// todo: 
+		// 使用带分类 bits 的 typeId( 方便用位操作直接检测对象类型 )
+		// 根据 mapData 生成小地图底图, 每帧只需要叠加 怪 玩家 道具 等图例
+		// 每帧检查玩家坐标, 判断玩家所在房间尺寸并限制 camera 范围
+		// 玩家穿过门时 camera 动画转场 切换房间( 焦点转移 )
+		// 
+		// 怪 和 门的开关有绑定关系. 理论上讲 1 道门会关联 2 波怪
+		// 如果 2 波怪( 门的两边 ) 均存在，门不会打开。
+		// 只要消失掉一边，门就会打开
 
 		// 图元：　墙门玩
 		std::u32string_view mapText = UR"(
 墙墙墙墙墙墙墙墙墙墙墙墙墙墙墙墙墙
 墙　　　　　　　墙　　　　　　　墙
 墙　　　玩　　　门　　　　　　　墙
+墙　　　　　　　墙　　　　　　　墙
+墙墙墙墙墙墙墙墙墙墙墙墙门墙墙墙墙
+墙　　　　　　　墙　　　　　　　墙
+墙　　　　　　　门　　　　　　　墙
 墙　　　　　　　墙　　　　　　　墙
 墙墙墙墙墙墙墙墙墙墙墙墙墙墙墙墙墙
 )";
@@ -70,9 +74,8 @@ namespace Test7 {
 		}
 
 		// 扫文本 先翻译成对象类型编号二维数组
-		// todo: 使用带类型特征的 typeId
-		xx::List<int32_t> mapData;
 		mapData.Resize<true, 0>(mapWidth * mapHeight);	// 默认填 0 代表空格
+		mapRoomMappings.Resize<true, -1>(mapWidth * mapHeight);
 
 		// 准备一个和 mapData 同样大小的 flag 数组，用来记录已经探索过或无法探索的区域( 标 1 )
 		xx::List<char> mapFlags;
@@ -111,6 +114,7 @@ namespace Test7 {
 			++x;
 		}
 
+
 		// 先扫出第一个 非空 非墙壁位置
 		XYi firstPos{ -1 };
 		for (int32_t y = 0; y < mapHeight; y++) {
@@ -122,7 +126,8 @@ namespace Test7 {
 				}
 			}
 		}
-		assert(false);	// 地图数据有问题：未找出任何一个 非空 非墙壁位置
+		// 如果能执行到这里，说明地图数据有问题：未找出任何一个 非空 非墙壁位置
+		assert(false);
 	LabEnd:;
 
 		// 从第一个非墙壁位置开始扫房间范围
@@ -130,23 +135,27 @@ namespace Test7 {
 		// 2. 找出所有相邻的门
 		// 3. 扫门的邻居，得到另一个房间的非墙壁位置开始扫房间范围( 递归逻辑 )
 
-		// 记录房间内容范围 AABB
-		xx::List<xx::FromTo<XYi>> rooms;
 		// 用于存储有哪些起始点坐标( 扫门算出 )
 		xx::List<XYi> firstPoss;
+
 		// 添加原始起始点
 		firstPoss.Emplace(firstPos);
 
 		// 用于指向当前房间信息
 		xx::FromTo<XYi>* aabb{};
+		// 用于保存当前房间信息的下标值
+		int32_t aabbIndex{};
+
 		// 用于存储当前房间有哪些内容坐标
 		xx::List<XYi> poss;
 
 		// 尝试往 poss 添加一个内容坐标( 无效就忽略 ) 并同步当前房间信息
 		auto PossTryAdd = [&](XYi p_) {
 			if (p_.x < 0 || p_.x >= mapWidth || p_.y < 0 || p_.y >= mapHeight) return;
-			if (auto i = p_.x + p_.y * mapWidth; mapFlags[i]) return;
-			else mapFlags[i] = 1;
+			auto i = p_.x + p_.y * mapWidth;
+			if (mapFlags[i]) return;
+			mapFlags[i] = 1;
+			mapRoomMappings[i] = aabbIndex;
 			poss.Add(p_);
 			if (p_.x < aabb->from.x) aabb->from.x = p_.x;
 			if (p_.y < aabb->from.y) aabb->from.y = p_.y;
@@ -172,8 +181,9 @@ namespace Test7 {
 		for (int32_t j = 0; j < firstPoss.len; ++j) {
 			poss.Clear();
 			auto fp = firstPoss[j];
-			rooms.Emplace(xx::FromTo<XYi>{.from = fp, .to = fp });
-			aabb = &rooms.Back();
+			aabbIndex = mapRooms.len;
+			mapRooms.Emplace(xx::FromTo<XYi>{.from = fp, .to = fp });
+			aabb = &mapRooms.Back();
 			PossTryAdd(fp);
 			// 递归遍历内容及其邻居
 			for (int32_t idx = 0; idx < poss.len; ++idx) {
@@ -192,14 +202,13 @@ namespace Test7 {
 		}
 
 		
-
-		mapSize.x = cCellPixelSize * mapWidth;
-		mapSize.y = cCellPixelSize * mapHeight;
-		cam.Init(gg.scale, gg.designSize.y / cRoom1x1PixelSize.y, mapSize / 2);
-		sortContainer.Resize<true>((int32_t)mapSize.y);
+		mapSize = { mapWidth, mapHeight };
+		mapPixelSize = mapSize * cCellPixelSize;
+		cam.Init(gg.scale, gg.designSize.y / cRoom1x1PixelSize.y, mapPixelSize / 2);
+		sortContainer.Resize<true>((int32_t)mapPixelSize.y);
 		gridBuildings.Init(cCellPixelSize, mapHeight, mapWidth);
 		phys.Emplace()->Init(this);
-		floorMaskTex.Emplace()->Make(mapSize);
+		floorMaskTex.Emplace()->Make(mapPixelSize);
 
 		// 逐行扫内容并生成
 		for (int32_t y = 0; y < mapHeight; y++) {

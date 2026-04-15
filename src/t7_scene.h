@@ -6,7 +6,21 @@ namespace Test7 {
 
 	using SceneBase = Global::SceneBase;
 	struct Scene : SceneBase {
-		XY mapSize{};
+		// 地图逻辑格子尺寸
+		XYi mapSize{};
+		// 地图总像素尺寸
+		XY mapPixelSize{};
+		// 地图布局数据( 值为 类型::cTypeId )
+		xx::List<int32_t> mapData;
+		// 记录房间内容范围 AABB
+		xx::List<xx::FromTo<XYi>> mapRooms;
+		// 用于查询地图内容属于哪个房间( 下标 )
+		xx::List<int32_t> mapRoomMappings;
+		// 迷你地图背景贴图
+		xx::Shared<xx::GLTexture> mapMiniBG;
+		// todo: 记录玩家出生点坐标
+
+
 		xx::Grid2dCircle<SceneItem*, GridCache> gridBuildings;	// for walls, doors
 		xx::Shared<PhysSystem> phys;	// for players, buckets
 		xx::List<xx::Shared<Wall>> walls;

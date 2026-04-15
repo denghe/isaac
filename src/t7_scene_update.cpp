@@ -38,8 +38,8 @@ namespace Test7 {
 			|| gg.mouse[GLFW_MOUSE_BUTTON_4]
 			) {
 			auto p = cam.ToLogicPos(gg.mousePos);
-			if (p.x > cCellPixelSize && p.x < mapSize.x - cCellPixelSize
-				&& p.y > cCellPixelSize && p.y < mapSize.y - cCellPixelSize) {
+			if (p.x > cCellPixelSize && p.x < mapPixelSize.x - cCellPixelSize
+				&& p.y > cCellPixelSize && p.y < mapPixelSize.y - cCellPixelSize) {
 
 				size_t count = 0;
 				if (gg.mouse[GLFW_MOUSE_BUTTON_2]) {

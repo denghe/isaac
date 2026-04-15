@@ -21,7 +21,7 @@ namespace Test1 {
 
 	using SceneBase = Global::SceneBase;
 	struct Scene : SceneBase {
-		XY mapSize{};
+		XY mapPixelSize{};
 		xx::Grid2dCircle<SceneItem*, GridCache> gridBuildings;	// for walls, doors
 		xx::Shared<PhysSystem> phys;	// for players, buckets
 		xx::List<xx::Shared<Wall>> walls;

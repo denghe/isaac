@@ -27,7 +27,7 @@ namespace Test4 {
 		void DrawItem(xx::Frame& f_, XY pos_, float scale_, xx::RGBA8 color_ = xx::RGBA8_White);
 
 		int32_t searchCount{}, createIgnoreCount{};
-		XY mapSize{}, mapCenterPos{};
+		XY mapPixelSize{}, mapCenterPos{};
 		static constexpr float cCellPixelSize{ 32.f };
 		static constexpr int32_t cNumMaxItems{ 100000 };
 		xx::List<xx::Shared<SceneItemBase>> items;

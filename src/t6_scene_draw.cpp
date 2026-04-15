@@ -14,19 +14,19 @@ namespace Test6 {
 		xx::FromTo<XY> originalRange{};
 		// 先算 camera 的 original 值范围. 如果地图比屏幕尺寸大，则范围为差值, 否则将地图居中
 		auto ws = gg.windowSize / cam.scale;
-		if (mapSize.x > ws.x) {
-			originalRange.from.x = mapSize.x * 0.5f - (mapSize.x - ws.x) * 0.5f;
-			originalRange.to.x = mapSize.x * 0.5f + (mapSize.x - ws.x) * 0.5f;
+		if (mapPixelSize.x > ws.x) {
+			originalRange.from.x = mapPixelSize.x * 0.5f - (mapPixelSize.x - ws.x) * 0.5f;
+			originalRange.to.x = mapPixelSize.x * 0.5f + (mapPixelSize.x - ws.x) * 0.5f;
 		}
 		else {
-			originalRange.from.x = originalRange.to.x = mapSize.x * 0.5f;
+			originalRange.from.x = originalRange.to.x = mapPixelSize.x * 0.5f;
 		}
-		if (mapSize.y > ws.y) {
-			originalRange.from.y = mapSize.y * 0.5f - (mapSize.y - ws.y) * 0.5f;
-			originalRange.to.y = mapSize.y * 0.5f + (mapSize.y - ws.y) * 0.5f;
+		if (mapPixelSize.y > ws.y) {
+			originalRange.from.y = mapPixelSize.y * 0.5f - (mapPixelSize.y - ws.y) * 0.5f;
+			originalRange.to.y = mapPixelSize.y * 0.5f + (mapPixelSize.y - ws.y) * 0.5f;
 		}
 		else {
-			originalRange.from.y = originalRange.to.y = mapSize.y * 0.5f;
+			originalRange.from.y = originalRange.to.y = mapPixelSize.y * 0.5f;
 		}
 		// 用值范围限制 original 值
 		auto original = player->pos;
@@ -44,7 +44,7 @@ namespace Test6 {
 			// 将数据里的东西画到 render texture 上并清空
 			frameBuffer.DrawTo(floorMaskTex, {}, [this] {
 				// 这里的绘制坐标不受 cam 影响, 直接映射到逻辑地图. 以贴图左上角为 0,0 开始绘制
-				auto leftTopPos = mapSize * XY{ -0.5f, 0.5f };
+				auto leftTopPos = mapPixelSize * XY{ -0.5f, 0.5f };
 				for (auto& o : floorMasks) {
 					auto p = leftTopPos + o.pos.FlipY();
 					gg.Quad().DrawFrame(o.frame, p, o.scale, o.radians, o.colorplus, o.color);
@@ -69,7 +69,7 @@ namespace Test6 {
 
 			// 地板污染痕迹绘制
 			// todo: 换 quad ex 并按屏幕实际尺寸裁切uv 以节省填充率?
-			gg.Quad().Draw(*floorMaskTex, *floorMaskTex, cam.ToGLPos(mapSize * 0.5f), 0.5f, cam.scale, 0, 1.f, {222,222,222,222});
+			gg.Quad().Draw(*floorMaskTex, *floorMaskTex, cam.ToGLPos(mapPixelSize * 0.5f), 0.5f, cam.scale, 0, 1.f, {222,222,222,222});
 
 			// sort order by y
 			SortContainerAdd(player.pointer);
