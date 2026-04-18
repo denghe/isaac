@@ -15,7 +15,7 @@ namespace Test7 {
 		Scene* scene{};
 
 		// 如果 item 是具有 属性面板 的对象，则可以创建并填充这个成员
-		xx::Shared<Properties> properties;
+		xx::Shared<Properties> properties;	// todo: 挪到多重继承类
 
 		// 用于注册回调函数
 		xx::List<std::function<void()>> disposeCallbacks;
